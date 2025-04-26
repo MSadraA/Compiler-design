@@ -1,6 +1,6 @@
 grammar CPY;
 
-compilationUnit
+program
     : translationUnit? EOF ;
 
 translationUnit
