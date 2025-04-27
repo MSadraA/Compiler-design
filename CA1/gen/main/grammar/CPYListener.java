@@ -1,5 +1,17 @@
-// Generated from /home/sadra/Documents/Codes/Compiler/ca1/src/main/grammar/CPY.g4 by ANTLR 4.13.2
+// Generated from /home/sadra/Documents/Codes/Compiler-design/CA1/src/main/grammar/CPY.g4 by ANTLR 4.13.2
 package main.grammar;
+
+    import java.util.ArrayList;
+    import java.util.List;
+    import main.ast.nodes.*;
+    import main.ast.nodes.declaration.*;
+    import main.ast.nodes.declarator.pointer.*;
+    import main.ast.nodes.expression.*;
+    import main.ast.nodes.declarator.*;
+    import main.ast.nodes.specifier.*;
+    import main.ast.nodes.statement.*;
+    import main.ast.nodes.type.*;
+
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -8,15 +20,15 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface CPYListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link CPYParser#compilationUnit}.
+	 * Enter a parse tree produced by {@link CPYParser#program}.
 	 * @param ctx the parse tree
 	 */
-	void enterCompilationUnit(CPYParser.CompilationUnitContext ctx);
+	void enterProgram(CPYParser.ProgramContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link CPYParser#compilationUnit}.
+	 * Exit a parse tree produced by {@link CPYParser#program}.
 	 * @param ctx the parse tree
 	 */
-	void exitCompilationUnit(CPYParser.CompilationUnitContext ctx);
+	void exitProgram(CPYParser.ProgramContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CPYParser#translationUnit}.
 	 * @param ctx the parse tree

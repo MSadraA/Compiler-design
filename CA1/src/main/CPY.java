@@ -1,5 +1,6 @@
 package main;
 
+import main.ast.nodes.Program;
 import main.grammar.CPYLexer;
 import main.grammar.CPYParser;
 import org.antlr.v4.runtime.CharStream;
@@ -10,20 +11,14 @@ import java.io.IOException;
 
 public class CPY {
     public static void main(String[] args) throws IOException {
-        // ورودی فایل
         CharStream reader = CharStreams.fromFileName(args[0]);
+        CPYLexer simpleLangLexer = new CPYLexer(reader);
+        CommonTokenStream tokens = new CommonTokenStream(simpleLangLexer);
+        CPYParser flParser = new CPYParser(tokens);
+        Program program = flParser.program().programRet;
+        System.out.println();
 
-        // ساخت لکسرو توکن
-        CPYLexer lexer = new CPYLexer(reader);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        // ساخت parser
-        CPYParser parser = new CPYParser(tokens);
-
-        // صدا زدن rule اصلی
-        CPYParser.ProgramContext tree = parser.program();
-
-        // چاپ parse tree
-        System.out.println(tree.toStringTree(parser));
+//        TestVisitor my_visitor = new TestVisitor();
+//        my_visitor.visit(program);
     }
 }
