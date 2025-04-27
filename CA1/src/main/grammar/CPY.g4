@@ -5,9 +5,8 @@ grammar CPY;
     import java.util.List;
     import main.ast.nodes.*;
     import main.ast.nodes.declaration.*;
-    import main.ast.nodes.declarator.pointer.*;
+    import main.ast.nodes.declaration.pointer.*;
     import main.ast.nodes.expression.*;
-    import main.ast.nodes.declarator.*;
     import main.ast.nodes.specifier.*;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
@@ -122,45 +121,16 @@ typeSpecifier returns [Type typeRet]
 specifierQualifierList
     : (typeSpecifier | Const) specifierQualifierList? ;
 
-declarator returns [PointerDeclarator declaratorRet]:
-    { $declaratorRet = new PointerDeclarator(); }
-    (p = pointer { $declaratorRet.setPointers($p.pointersRet); })?
-    d = directDeclarator { $declaratorRet.setDeclarator($d.declaratorRet); };
+declarator returns [Declarator declaratorRet]:
+    { $declaratorRet = new Declarator(); }
+    (pointer {$declaratorRet.setPointers($p.pointersRet);})? directDeclarator[$declaratorRet] ;
 
-directDeclarator returns [Declarator declaratorRet]
-    : a = directDeclaratorIdentifier {$declaratorRet = a.declaratorRet;}
-    | b = directDeclaratorWithParen {$declaratorRet = b.declaratorRet;}
-    | c = nestedDirectDeclaratorWithBracket {$declaratorRet = c.declaratorRet;}
-    | d = nestedDirectDeclaratorWithParen {$declaratorRet = d.declaratorRet;}
-    ;
-//==============================================================================================
-directDeclaratorIdentifier returns [IdentifierDeclarator declaratorRet]
-    : Identifier { $declaratorRet = new IdentifierDeclarator(); $declaratorRet.setIdentifier($Identifier.text);}
-    ;
+directDeclarator [Declarator declaratorRet]
+    : Identifier { $declaratorRet.setIdentifier($Identifier.text); }
+    | LeftParen a = declarator {$declaratorRet.setDeclarator($a.declaratorRet);} RightParen
+    | directDeclarator LeftBracket expression? RightBracket
+    | directDeclarator LeftParen  (parameterList | identifierList?) RightParen ;
 
-directDeclaratorWithParen returns [Declarator declaratorRet]
-    : LeftParen d = declarator RightParen { $declaratorRet = $d.declaratorRet; }
-    ;
-
-nestedDirectDeclaratorWithBracket returns [ArrayDeclarator declaratorRet]
-    : d = directDeclarator
-    {
-    $declaratorRet = new ArrayDeclarator();
-    $declaratorRet.setDeclarator($d.declaratorRet);
-    }
-    LeftBracket (c = expression { $declaratorRet.setExpression($c.expressionRet); })? RightBracket
-    ;
-
-nestedDirectDeclaratorWithParen returns [FunctionDeclarator declaratorRet]
-    : d = directDeclarator
-    {
-        $declaratorRet = new FunctionDeclarator();
-        $declaratorRet.setDeclarator($d.declaratorRet);
-    }
-    LeftParen (p = parameterList { $declaratorRet.setParameters($p.parametersRet); }
-    | (i = identifierList { $declaratorRet.setIdentifiers($i.identifiersRet); })?) RightParen
-    ;
-//==============================================================================================
 pointer returns [List<Pointer> pointersRet]
     : { $pointersRet = new ArrayList<Pointer>(); }
       ((Star { $pointersRet.add(new Pointer()); })

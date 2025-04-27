@@ -5,21 +5,16 @@ package main.grammar;
     import java.util.List;
     import main.ast.nodes.*;
     import main.ast.nodes.declaration.*;
-    import main.ast.nodes.declarator.pointer.*;
+    import main.ast.nodes.declaration.pointer.*;
     import main.ast.nodes.expression.*;
     import main.ast.nodes.declarator.*;
     import main.ast.nodes.specifier.*;
-    import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
-import org.antlr.v4.runtime.tree.*;
-import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
+    import org.antlr.v4.runtime.tree.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
 public class CPYParser extends Parser {
