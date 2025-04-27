@@ -122,11 +122,10 @@ typeSpecifier returns [Type typeRet]
 specifierQualifierList
     : (typeSpecifier | Const) specifierQualifierList? ;
 
-
-declarator returns [Declarator declaratorRet]:
+declarator returns [PointerDeclarator declaratorRet]:
     { $declaratorRet = new PointerDeclarator(); }
-    (p = pointer {$declaratorRet.setPointers($p.pointersRet);})?
-    d = directDeclarator { $declaratorRet.setDeclarator($d.declaratorRet); } ;
+    (p = pointer { $declaratorRet.setPointers($p.pointersRet); })?
+    d = directDeclarator { $declaratorRet.setDeclarator($d.declaratorRet); };
 
 directDeclarator returns [Declarator declaratorRet]
     : Identifier { $declaratorRet = new IdentifierDeclarator(); $declaratorRet.setIdentifier($Identifier.text);}
@@ -147,13 +146,13 @@ directDeclarator returns [Declarator declaratorRet]
 
 pointer returns [List<Pointer> pointersRet]
     : { $pointersRet = new ArrayList<Pointer>(); }
-      ((Star { $pointersRet.add(new Pointer()); })
+      ((Star)
        (Const { $pointersRet.add(new ConstSpecifier()); })?)+ ;
 
 parameterList returns [List<ParamDec> parametersRet]
     : { $parametersRet = new ArrayList<ParamDec>(); }
-      a = parameterDeclaration { parametersRet.add($a.parameterRet); }
-      (Comma b = parameterDeclaration { parametersRet.add($b.parameterRet); })* ;
+      a = parameterDeclaration { $parametersRet.add($a.parameterRet); }
+      (Comma b = parameterDeclaration { $parametersRet.add($b.parameterRet); })* ;
 
 parameterDeclaration returns [ParamDec parameterRet]
     : { $parameterRet = new ParamDec(); }

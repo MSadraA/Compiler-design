@@ -5,8 +5,9 @@ grammar CPY;
     import java.util.List;
     import main.ast.nodes.*;
     import main.ast.nodes.declaration.*;
-    import main.ast.nodes.declaration.pointer.*;
+    import main.ast.nodes.declarator.pointer.*;
     import main.ast.nodes.expression.*;
+    import main.ast.nodes.declarator.*;
     import main.ast.nodes.specifier.*;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
@@ -121,25 +122,37 @@ typeSpecifier returns [Type typeRet]
 specifierQualifierList
     : (typeSpecifier | Const) specifierQualifierList? ;
 
-declarator returns [Declarator declaratorRet]:
-    { $declaratorRet = new Declarator(); }
-    (pointer {$declaratorRet.setPointers($p.pointersRet);})? directDeclarator[$declaratorRet] ;
+declarator returns [PointerDeclarator declaratorRet]:
+    { $declaratorRet = new PointerDeclarator(); }
+    (p = pointer { $declaratorRet.setPointers($p.pointersRet); })?
+    d = directDeclarator { $declaratorRet.setDeclarator($d.declaratorRet); };
 
-directDeclarator [Declarator declaratorRet]
-    : Identifier { $declaratorRet.setIdentifier($Identifier.text); }
-    | LeftParen a = declarator {$declaratorRet.setDeclarator($a.declaratorRet);} RightParen
-    | directDeclarator LeftBracket expression? RightBracket
-    | directDeclarator LeftParen  (parameterList | identifierList?) RightParen ;
+directDeclarator returns [Declarator declaratorRet]
+    : Identifier { $declaratorRet = new IdentifierDeclarator(); $declaratorRet.setIdentifier($Identifier.text);}
+    | LeftParen a = declarator RightParen { $declaratorRet = $a.declaratorRet; }
+    | b = directDeclarator
+    {
+    $declaratorRet = new ArrayDeclarator();
+    $declaratorRet.setDeclarator($b.declaratorRet);
+    }
+      LeftBracket (c = expression { $declaratorRet.setExpression($c.expressionRet); })? RightBracket
+    | d = directDeclarator
+    {
+    $declaratorRet = new FunctionDeclarator();
+    $declaratorRet.setDeclarator($d.declaratorRet);
+    }
+    LeftParen (f = parameterList { $declaratorRet.setParameters($f.parametersRet); }
+    | (g = identifierList { $declaratorRet.setIdentifiers($g.identifiersRet); })?) RightParen ;
 
 pointer returns [List<Pointer> pointersRet]
     : { $pointersRet = new ArrayList<Pointer>(); }
-      ((Star { $pointersRet.add(new Pointer()); })
+      ((Star)
        (Const { $pointersRet.add(new ConstSpecifier()); })?)+ ;
 
 parameterList returns [List<ParamDec> parametersRet]
     : { $parametersRet = new ArrayList<ParamDec>(); }
-      a = parameterDeclaration { parametersRet.add($a.parameterRet); }
-      (Comma b = parameterDeclaration { parametersRet.add($b.parameterRet); })* ;
+      a = parameterDeclaration { $parametersRet.add($a.parameterRet); }
+      (Comma b = parameterDeclaration { $parametersRet.add($b.parameterRet); })* ;
 
 parameterDeclaration returns [ParamDec parameterRet]
     : { $parameterRet = new ParamDec(); }

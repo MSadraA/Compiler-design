@@ -1,7 +1,18 @@
 // Generated from /home/sadra/Documents/Codes/Compiler-design/CA1/src/main/grammar/CPY.g4 by ANTLR 4.13.2
 package main.grammar;
 
-    import org.antlr.v4.runtime.tree.ParseTreeListener;
+    import java.util.ArrayList;
+    import java.util.List;
+    import main.ast.nodes.*;
+    import main.ast.nodes.declaration.*;
+    import main.ast.nodes.declarator.pointer.*;
+    import main.ast.nodes.expression.*;
+    import main.ast.nodes.declarator.*;
+    import main.ast.nodes.specifier.*;
+    import main.ast.nodes.statement.*;
+    import main.ast.nodes.type.*;
+
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
  * This interface defines a complete listener for a parse tree produced by
