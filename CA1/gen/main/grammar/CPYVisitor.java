@@ -11,6 +11,7 @@ package main.grammar;
     import main.ast.nodes.specifier.*;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
+    import main.ast.nodes.expression.initializer.*;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -190,6 +191,12 @@ public interface CPYVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitInitializerList(CPYParser.InitializerListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPYParser#initializerEntry}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInitializerEntry(CPYParser.InitializerEntryContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPYParser#designation}.
 	 * @param ctx the parse tree

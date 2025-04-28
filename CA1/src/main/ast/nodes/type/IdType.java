@@ -1,5 +1,9 @@
 package main.ast.nodes.type;
 
 public class IdType extends Type {
-    public IdType(){}
+    private String name;
+
+    public IdType(String name){
+        this.name = name;
+    }
 }

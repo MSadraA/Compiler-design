@@ -11,6 +11,7 @@ package main.grammar;
     import main.ast.nodes.specifier.*;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
+    import main.ast.nodes.expression.initializer.*;
 
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -220,6 +221,13 @@ public class CPYBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements CP
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public T visitInitializerList(CPYParser.InitializerListContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitInitializerEntry(CPYParser.InitializerEntryContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

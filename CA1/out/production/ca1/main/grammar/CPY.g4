@@ -11,6 +11,7 @@ grammar CPY;
     import main.ast.nodes.specifier.*;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
+    import main.ast.nodes.expression.initializer.*;
 }
 
 
@@ -41,15 +42,33 @@ declarationList returns [List<VarDec> varDecsRet]:
 
 
 expression returns [Expression expressionRet]:
-    {$expressionRet = new Expression();}
-    Identifier | Constant | StringLiteral+
-  | LeftParen expression RightParen
-  | LeftParen typeName RightParen LeftBrace initializerList Comma? RightBrace
-  | expression LeftBracket expression RightBracket                                // Array indexing
-  | expression LeftParen argumentExpressionList? RightParen                       // Function call
-  | expression PlusPlus                                                           // Postfix increment
-  | expression MinusMinus                                                         // Postfix decrement
-  | (PlusPlus  | MinusMinus | Sizeof)* (                                          // Prefix operators (zero or more)
+    Identifier
+    {
+        $expressionRet = new IdExpression($Identifier.getText());
+        $expressionRet.setLine($Identifier.getLine());
+    }
+    | Constant
+    {
+        $expressionRet = new ConstExpression();
+        $expressionRet.setLine($Constant.getLine());
+    }
+    | {$expressionRet = new StringExpression();}
+    (StringLiteral {$expressionRet.addStringLiteral($StringLiteral.getText());})+
+    | LeftParen expression RightParen
+    {
+        $expressionRet = $expression.expressionRet;
+    }
+    | {$expressionRet = new CompoundLiteralExpression();}
+    LeftParen (t = typeName) {$expressionRet.setType($t.parameterRet);} RightParen
+    LeftBrace (i = initializerList) {$expressionRet.setInitializers($i.initializerListRet);} Comma? RightBrace
+    //todo
+    | expression LeftBracket expression RightBracket                                // Array indexing
+    | expression LeftParen argumentExpressionList? RightParen                       // Function call
+
+
+    | expression PlusPlus                                                           // Postfix increment
+    | expression MinusMinus                                                         // Postfix decrement
+    | (PlusPlus  | MinusMinus | Sizeof)* (                                          // Prefix operators (zero or more)
          Identifier
        | Constant
        | StringLiteral+
@@ -58,20 +77,24 @@ expression returns [Expression expressionRet]:
        | unaryOperator castExpression
        | Sizeof LeftParen typeName RightParen
     )
-  | LeftParen typeName RightParen castExpression                                  // Cast expression
-  | expression (Star | Div | Mod) expression                                      // Multiplicative
-  | expression (Plus | Minus) expression                                          // Additive
-  | expression (LeftShift | RightShift) expression                                // Shift
-  | expression (Less | Greater | LessEqual | GreaterEqual) expression             // Relational
-  | expression (Equal | NotEqual) expression                                      // Equality
-  | expression And expression                                                     // Bitwise AND
-  | expression Xor expression                                                     // Bitwise XOR
-  | expression Or expression                                                      // Bitwise OR
-  | expression AndAnd expression                                                  // Logical AND
-  | expression OrOr expression                                                    // Logical OR
-  | expression Question expression Colon expression                               // Conditional operator
-  | expression assignmentOperator expression                                      // Assignment
-  | expression (Comma expression)+ ;                                              // Comma operator
+    | LeftParen typeName RightParen castExpression                                  // Cast expression
+
+
+    | expression (Star | Div | Mod) expression                                      // Multiplicative
+    | expression (Plus | Minus) expression                                          // Additive
+    | expression (LeftShift | RightShift) expression                                // Shift
+    | expression (Less | Greater | LessEqual | GreaterEqual) expression             // Relational
+    | expression (Equal | NotEqual) expression                                      // Equality
+    | expression And expression                                                     // Bitwise AND
+    | expression Xor expression                                                     // Bitwise XOR
+    | expression Or expression                                                      // Bitwise OR
+    | expression AndAnd expression                                                  // Logical AND
+    | expression OrOr expression                                                    // Logical OR
+
+
+    | expression Question expression Colon expression                               // Conditional operator
+    | expression assignmentOperator expression                                      // Assignment
+    | expression (Comma expression)+ ;                                              // Comma operator
 
 argumentExpressionList
   : expression (Comma expression)* ;
@@ -95,9 +118,9 @@ declarationSpecifiers returns [List<Specifier> specifiersRet]
 
 
 declarationSpecifier returns [Specifier specifierRet]:
-    Typedef{$specifierRet = new TypedefSpecifier();}
+    Typedef{$specifierRet = new TypedefSpecifier(); $specifierRet.setLine($Typedef.getLine());}
     | t = typeSpecifier{$specifierRet = $t.typeRet;}
-    | Const {$specifierRet = new ConstSpecifier();};
+    | Const {$specifierRet = new ConstSpecifier(); $specifierRet.setLine($Const.getLine());};
 
 initDeclaratorList
     : initDeclarator (Comma initDeclarator)* ;
@@ -106,21 +129,29 @@ initDeclarator
     : declarator (Assign initializer)? ;
 
 typeSpecifier returns [Type typeRet]
-    : Void    {$typeRet = new VoidType();}
-    | Char    {$typeRet = new CharType();}
-    | Short   {$typeRet = new ShortType();}
-    | Int     {$typeRet = new IntType();}
-    | Long    {$typeRet = new LongType();}
-    | Float   {$typeRet = new FloatType();}
-    | Double  {$typeRet = new DoubleType();}
-    | Signed  {$typeRet = new SignedType();}
-    | Unsigned{$typeRet = new UnsignedType();}
-    | Bool    {$typeRet = new BoolType();}
-    | Identifier {$typeRet = new IdType();}
+    : Void    {$typeRet = new VoidType(); $typeRet.setLine($Void.getLine());}
+    | Char    {$typeRet = new CharType(); $typeRet.setLine($Char.getLine());}
+    | Short   {$typeRet = new ShortType(); $typeRet.setLine($Short.getLine());}
+    | Int     {$typeRet = new IntType(); $typeRet.setLine($Int.getLine());}
+    | Long    {$typeRet = new LongType(); $typeRet.setLine($Long.getLine());}
+    | Float   {$typeRet = new FloatType(); $typeRet.setLine($Float.getLine());}
+    | Double  {$typeRet = new DoubleType(); $typeRet.setLine($Double.getLine());}
+    | Signed  {$typeRet = new SignedType(); $typeRet.setLine($Signed.getLine());}
+    | Unsigned{$typeRet = new UnsignedType(); $typeRet.setLine($Unsigned.getLine());}
+    | Bool    {$typeRet = new BoolType(); $typeRet.setLine($Bool.getLine());}
+    | id = Identifier {$typeRet = new IdType($id.getText()); $typeRet.setLine($id.getLine());}
     ;
 
-specifierQualifierList
-    : (typeSpecifier | Const) specifierQualifierList? ;
+specifierQualifierList returns [List<Specifier> specifiersRet]:
+    { $specifiersRet = new ArrayList<>(); }
+    (t = typeSpecifier { $specifiersRet.add($t.typeRet);}
+    | Const
+    {
+        ConstSpecifier constSpec = new ConstSpecifier();
+        constSpec.setLine($Const.getLine());
+        $specifiersRet.add(constSpec);
+    })
+    (s = specifierQualifierList {$specifiersRet.addAll($s.specifiersRet);})? ;
 
 declarator returns [PointerDeclarator declaratorRet]:
     { $declaratorRet = new PointerDeclarator(); }
@@ -128,18 +159,23 @@ declarator returns [PointerDeclarator declaratorRet]:
     d = directDeclarator { $declaratorRet.setDeclarator($d.declaratorRet); };
 
 directDeclarator returns [Declarator declaratorRet]
-    : Identifier { $declaratorRet = new IdentifierDeclarator(); $declaratorRet.setIdentifier($Identifier.text);}
+    : Identifier
+    {
+        $declaratorRet = new IdentifierDeclarator();
+        $declaratorRet.setIdentifier($Identifier.text);
+        $declaratorRet.setLine($Identifier.getLine());
+    }
     | LeftParen a = declarator RightParen { $declaratorRet = $a.declaratorRet; }
     | b = directDeclarator
     {
-    $declaratorRet = new ArrayDeclarator();
-    $declaratorRet.setDeclarator($b.declaratorRet);
+        $declaratorRet = new ArrayDeclarator();
+        $declaratorRet.setDeclarator($b.declaratorRet);
     }
       LeftBracket (c = expression { $declaratorRet.setExpression($c.expressionRet); })? RightBracket
     | d = directDeclarator
     {
-    $declaratorRet = new FunctionDeclarator();
-    $declaratorRet.setDeclarator($d.declaratorRet);
+        $declaratorRet = new FunctionDeclarator();
+        $declaratorRet.setDeclarator($d.declaratorRet);
     }
     LeftParen (f = parameterList { $declaratorRet.setParameters($f.parametersRet); }
     | (g = identifierList { $declaratorRet.setIdentifiers($g.identifiersRet); })?) RightParen ;
@@ -165,8 +201,10 @@ identifierList returns [List<String> identifiersRet]
       Identifier { $identifiersRet.add($Identifier.text); }
       (Comma Identifier { $identifiersRet.add($Identifier.text); })* ;
 
-typeName
-    : specifierQualifierList abstractDeclarator? ;
+typeName returns [ParamDec parameterRet]:
+    { $parameterRet = new ParamDec(); }
+    s = specifierQualifierList { $parameterRet.setSpecifiers($s.specifiersRet); }
+    (a = abstractDeclarator {$parameterRet.setDeclarator($a.declaratorRet);})? ;
 
 abstractDeclarator returns [Declarator declaratorRet]
     : { $declaratorRet = new PointerDeclarator(); }
@@ -184,40 +222,76 @@ directAbstractDeclarator returns [Declarator declaratorRet]:
     | (c = parameterList {$declaratorRet.setParameters($c.parametersRet);})?) RightParen
     | d = directAbstractDeclarator
     {
-    $declaratorRet = new ArrayDeclarator();
-    $declaratorRet.setDeclarator($d.declaratorRet);
+        $declaratorRet = new ArrayDeclarator();
+        $declaratorRet.setDeclarator($d.declaratorRet);
     }
     LeftBracket (e = expression {$declaratorRet.setExpression($e.expressionRet);})? RightBracket
     | f = directAbstractDeclarator
     {
-    $declaratorRet = new FunctionDeclarator();
-    $declaratorRet.setDeclarator($f.declaratorRet);
+        $declaratorRet = new FunctionDeclarator();
+        $declaratorRet.setDeclarator($f.declaratorRet);
     }
     LeftParen (g = parameterList {$declaratorRet.setParameters($g.parametersRet);})? RightParen ;
 
-initializer
-    : expression | LeftBrace initializerList Comma? RightBrace ;
+initializer returns [Initializer initializerRet]:
+    {$initializerRet = new Initializer();}
+    e = expression {$initializerRet.setExpression($e.expressionRet); }
+    | LeftBrace i = initializerList {$initializerRet.setInitializerList($i.initializerListRet);} Comma? RightBrace
+    ;
 
-initializerList
-    : designation? initializer (Comma designation? initializer)* ;
+initializerList returns [List<InitializerEntry> initializerListRet]
+    : { $initializerListRet = new ArrayList<>(); }
+      first = initializerEntry { $initializerListRet.add($first.entryRet); }
+      (Comma next=initializerEntry { $initializerListRet.add($next.entryRet); })*
+    ;
 
-designation
-    : designator+ Assign ;
+initializerEntry returns [InitializerEntry entryRet]:
+    {$entryRet = new InitializerEntry();}
+    (d = designation {$entryRet.setDesignators($d.designatorsRet);})?
+    i=initializer {$entryRet.setInitializer($i.initializerRet);}
+    ;
 
-designator
-    : LeftBracket expression RightBracket | Dot Identifier ;
+designation returns [List<Designator> designatorsRet]
+    : { $designatorsRet = new ArrayList<>(); }
+      (d=designator { $designatorsRet.add($d.designatorRet); })+ Assign
+    ;
 
-statement
-    : compoundStatement | expressionStatement | selectionStatement | iterationStatement | jumpStatement ;
+designator returns [Designator designatorRet]
+    : LeftBracket e = expression RightBracket
+        { $designatorRet = new ArrayDesignator(); $designatorRet.setExpression($e.expressionRet); }
+    | Dot Identifier
+        {
+            $designatorRet = new FieldDesignator();
+            $designatorRet.setIdentifier($Identifier.getText());
+            $designatorRet.setLine($Identifier.getLine());
+        }
+    ;
 
-compoundStatement
-    : LeftBrace (blockItem+)? RightBrace ;
 
-blockItem
-    : statement | declaration ;
+statement returns [Statement statementRet]
+    : c = compoundStatement { $statementRet = $c.compoundStatementRet; }
+    | expressionStatement
+    | selectionStatement | iterationStatement | jumpStatement ;
 
-expressionStatement
-    : expression? Semi ;
+compoundStatement returns [CompoundStatement compoundStatementRet]:
+    { $compoundStatementRet = new CompoundStatement(); }
+    LeftBrace ((b = blockItem
+    {
+        if ($b.varDecRet != null) {
+            $compoundStatementRet.addVarDec($b.varDecRet);
+        }
+        else if ($b.statementRet != null) {
+            $compoundStatementRet.addStatement($b.statementRet);
+        }
+    }
+    )+)? RightBrace ;
+
+blockItem returns [Statement statementRet , VarDec varDecRet]
+    : s = statement {$statementRet = $s.statementRet;}
+    | d = declaration {$varDecRet = $d.varDecRet;} ;
+
+expressionStatement returns [Expression expressionRet]
+    : (e = expression {$expressionRet = $e.expressionRet;})? Semi ;
 
 selectionStatement
     : If LeftParen expression RightParen statement (Else statement)? ;

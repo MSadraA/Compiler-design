@@ -11,6 +11,7 @@ package main.grammar;
     import main.ast.nodes.specifier.*;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
+    import main.ast.nodes.expression.initializer.*;
 
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -299,6 +300,16 @@ public interface CPYListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInitializerList(CPYParser.InitializerListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CPYParser#initializerEntry}.
+	 * @param ctx the parse tree
+	 */
+	void enterInitializerEntry(CPYParser.InitializerEntryContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CPYParser#initializerEntry}.
+	 * @param ctx the parse tree
+	 */
+	void exitInitializerEntry(CPYParser.InitializerEntryContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CPYParser#designation}.
 	 * @param ctx the parse tree

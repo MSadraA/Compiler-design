@@ -11,6 +11,7 @@ package main.grammar;
     import main.ast.nodes.specifier.*;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
+    import main.ast.nodes.expression.initializer.*;
 
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -360,6 +361,18 @@ public class CPYBaseListener implements CPYListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitInitializerList(CPYParser.InitializerListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInitializerEntry(CPYParser.InitializerEntryContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitInitializerEntry(CPYParser.InitializerEntryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
