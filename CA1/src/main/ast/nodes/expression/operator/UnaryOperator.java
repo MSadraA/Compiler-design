@@ -6,6 +6,9 @@ public enum UnaryOperator {
     BITWISE_NOT, // Bitwise NOT (~)
     INCREMENT,  // ++
     DECREMENT,  // --
-    SIZEOF
+    SIZEOF,
+    AND,
+    TILDE,
+    STAR,
 }
 

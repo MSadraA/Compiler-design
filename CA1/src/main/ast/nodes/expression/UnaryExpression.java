@@ -5,16 +5,17 @@ import main.ast.nodes.expression.operator.UnaryOperator;
 public class UnaryExpression extends Expression{
     private Expression operand;
     protected UnaryOperator unaryOperator;
+    private boolean isPostfix;
 
     public UnaryExpression() { }
     public UnaryExpression(Expression operand, UnaryOperator unaryOperator){
         this.operand = operand;
         this.unaryOperator = unaryOperator;
     }
-    public UnaryExpression(Expression operand, UnaryOperator unaryOperator, int line){
+    public UnaryExpression(Expression operand, UnaryOperator unaryOperator, Boolean isPostfix){
         this.operand = operand;
         this.unaryOperator = unaryOperator;
-        this.setLine(line);
+        this.isPostfix = isPostfix;
     }
 
     @Override
@@ -27,4 +28,8 @@ public class UnaryExpression extends Expression{
         this.operand = operand;
     }
 
+    @Override
+    public void setPostfix(boolean postfix) {
+        isPostfix = postfix;
+    }
 }

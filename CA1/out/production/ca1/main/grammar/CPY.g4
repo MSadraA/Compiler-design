@@ -12,6 +12,7 @@ grammar CPY;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
     import main.ast.nodes.expression.initializer.*;
+    import main.ast.nodes.expression.operator.*;
 }
 
 
@@ -42,6 +43,70 @@ declarationList returns [List<VarDec> varDecsRet]:
 
 
 expression returns [Expression expressionRet]:
+    pri = primaryExpression {$expressionRet = $pri.expressionRet;}
+    | e1 = expression LeftBracket e2 = expression RightBracket                      // Array indexing
+    {
+        $expressionRet = new ArrayExpression();
+        $expressionRet.setAssigned($e1.expressionRet);
+        $expressionRet.setIndex($e2.expressionRet);
+    }
+    | e = expression                                                                // Function call
+    {
+        $expressionRet = new FunctionCallExpression();
+        $expressionRet.setFunction($e.expressionRet);
+    }
+    LeftParen (a = argumentExpressionList {$expressionRet.setArguments($a.expressionsRet);})? RightParen
+
+    | e = expression PlusPlus {$expressionRet = new UnaryExpression($e.expressionRet, UnaryOperator.INCREMENT, true);} // Postfix increment
+    | e = expression MinusMinus {$expressionRet = new UnaryExpression($e.expressionRet, UnaryOperator.DECREMENT, true);} // Postfix decrement
+    | pre = prefixexpression {$expressionRet = $pre.expressionRet;}
+    | c = castType {$expressionRet = $c.expressionRet;}                                // Cast expression
+    //todo
+    | expression (Star | Div | Mod) expression                                      // Multiplicative
+    | expression (Plus | Minus) expression                                          // Additive
+    | expression (LeftShift | RightShift) expression                                // Shift
+    | expression (Less | Greater | LessEqual | GreaterEqual) expression             // Relational
+    | expression (Equal | NotEqual) expression                                      // Equality
+    | expression And expression                                                     // Bitwise AND
+    | expression Xor expression                                                     // Bitwise XOR
+    | expression Or expression                                                      // Bitwise OR
+    | expression AndAnd expression                                                  // Logical AND
+    | expression OrOr expression                                                    // Logical OR
+
+    | expression Question expression Colon expression                               // Conditional operator
+    | expression assignmentOperator expression                                      // Assignment
+    | e1 = expression                                                               // Comma operator
+    {
+        $expressionRet = new CommaExpression();
+        $expressionRet.addExpression($e1.expressionRet);
+    }
+    (Comma e2 = expression {$expressionRet.addExpression($e2.expressionRet);})+ ;
+
+
+prefixexpression returns [Expression expressionRet , List<UnaryOperator> ops = new ArrayList<>()]:
+    (p=prefixOperator { $ops.add($p.operatorRet); })* (base = postfixExpression)
+      {
+          $expressionRet = $base.expressionRet;
+          for (int i = $ops.size() - 1; i >= 0; i--) {
+              UnaryExpression ue = new UnaryExpression($expressionRet , $ops.get(i) , false);
+              $expressionRet = ue;
+          }
+      }
+    ;
+
+prefixOperator returns [UnaryOperator operatorRet]:
+    PlusPlus { $operatorRet = UnaryOperator.INCREMENT; }
+    | MinusMinus { $operatorRet = UnaryOperator.DECREMENT; }
+    | Sizeof { $operatorRet = UnaryOperator.SIZEOF; }
+    ;
+
+postfixExpression returns [Expression expressionRet]:
+    p = primaryExpression {$expressionRet = $p.expressionRet;}
+    | op = unaryOperator c = castExpression {$expressionRet = new UnaryExpression($c.expressionRet, $op.operatorRet, false);}
+    | Sizeof LeftParen t = typeName RightParen {$expressionRet = new SizeofExpression($t.parameterRet);}
+    ;
+
+primaryExpression returns [Expression expressionRet]:
     Identifier
     {
         $expressionRet = new IdExpression($Identifier.getText());
@@ -61,49 +126,32 @@ expression returns [Expression expressionRet]:
     | {$expressionRet = new CompoundLiteralExpression();}
     LeftParen (t = typeName) {$expressionRet.setType($t.parameterRet);} RightParen
     LeftBrace (i = initializerList) {$expressionRet.setInitializers($i.initializerListRet);} Comma? RightBrace
-    //todo
-    | expression LeftBracket expression RightBracket                                // Array indexing
-    | expression LeftParen argumentExpressionList? RightParen                       // Function call
+    ;
 
+argumentExpressionList returns [List<Expression> expressionsRet]:
+    { $expressionsRet = new ArrayList<>(); }
+    e1 = expression {$expressionsRet.add($e1.expressionRet);}
+    (Comma e2 = expression {$expressionsRet.add($e2.expressionRet);})* ;
 
-    | expression PlusPlus                                                           // Postfix increment
-    | expression MinusMinus                                                         // Postfix decrement
-    | (PlusPlus  | MinusMinus | Sizeof)* (                                          // Prefix operators (zero or more)
-         Identifier
-       | Constant
-       | StringLiteral+
-       | LeftParen expression RightParen
-       | LeftParen typeName RightParen LeftBrace initializerList Comma? RightBrace
-       | unaryOperator castExpression
-       | Sizeof LeftParen typeName RightParen
-    )
-    | LeftParen typeName RightParen castExpression                                  // Cast expression
+unaryOperator returns [UnaryOperator operatorRet]:
+    And { $operatorRet = UnaryOperator.AND;}
+    | Star { $operatorRet = UnaryOperator.STAR; }
+    | Plus { $operatorRet = UnaryOperator.PLUS; }
+    | Minus { $operatorRet = UnaryOperator.MINUS; }
+    | Tilde { $operatorRet = UnaryOperator.TILDE; }
+    | Not { $operatorRet = UnaryOperator.NOT; }
+    ;
 
+castExpression returns [Expression expressionRet]
+  : castType { $expressionRet = $castType.expressionRet; }
+  | expression { $expressionRet = $expression.expressionRet; }
+  | DigitSequence { $expressionRet = new DigitSequenceExpression($DigitSequence.getText());}
+  ;
 
-    | expression (Star | Div | Mod) expression                                      // Multiplicative
-    | expression (Plus | Minus) expression                                          // Additive
-    | expression (LeftShift | RightShift) expression                                // Shift
-    | expression (Less | Greater | LessEqual | GreaterEqual) expression             // Relational
-    | expression (Equal | NotEqual) expression                                      // Equality
-    | expression And expression                                                     // Bitwise AND
-    | expression Xor expression                                                     // Bitwise XOR
-    | expression Or expression                                                      // Bitwise OR
-    | expression AndAnd expression                                                  // Logical AND
-    | expression OrOr expression                                                    // Logical OR
-
-
-    | expression Question expression Colon expression                               // Conditional operator
-    | expression assignmentOperator expression                                      // Assignment
-    | expression (Comma expression)+ ;                                              // Comma operator
-
-argumentExpressionList
-  : expression (Comma expression)* ;
-
-unaryOperator
-  : And | Star | Plus | Minus | Tilde | Not ;
-
-castExpression
-  : LeftParen typeName RightParen castExpression | expression | DigitSequence ;
+castType returns [Expression expressionRet]:
+    LeftParen t = typeName RightParen c =castExpression
+    { $expressionRet = new CastExpression($t.parameterRet , $c.expressionRet); }
+    ;
 
 assignmentOperator
   : Assign | StarAssign | DivAssign | ModAssign | PlusAssign | MinusAssign | LeftShiftAssign | RightShiftAssign | AndAssign | XorAssign | OrAssign ;
@@ -234,10 +282,17 @@ directAbstractDeclarator returns [Declarator declaratorRet]:
     LeftParen (g = parameterList {$declaratorRet.setParameters($g.parametersRet);})? RightParen ;
 
 initializer returns [Initializer initializerRet]:
-    {$initializerRet = new Initializer();}
-    e = expression {$initializerRet.setExpression($e.expressionRet); }
-    | LeftBrace i = initializerList {$initializerRet.setInitializerList($i.initializerListRet);} Comma? RightBrace
-    ;
+    e = expression
+    {
+        $initializerRet = new Initializer();
+        $initializerRet.setExpression($e.expressionRet);
+    }
+    | LeftBrace i = initializerList Comma? RightBrace
+    {
+        $initializerRet = new Initializer();
+        $initializerRet.setInitializerList($i.initializerListRet);
+    }
+;
 
 initializerList returns [List<InitializerEntry> initializerListRet]
     : { $initializerListRet = new ArrayList<>(); }
@@ -269,7 +324,7 @@ designator returns [Designator designatorRet]
 
 statement returns [Statement statementRet]
     : c = compoundStatement { $statementRet = $c.compoundStatementRet; }
-    | e = expressionStatement { $statementRet = $e.expressionRet; }
+    | e = expressionStatement { $statementRet = $e.statementRet; }
     | selectionStatement | iterationStatement | jumpStatement ;
 
 compoundStatement returns [CompoundStatement compoundStatementRet]:
@@ -289,8 +344,12 @@ blockItem returns [Statement statementRet , VarDec varDecRet]
     : s = statement {$statementRet = $s.statementRet;}
     | d = declaration {$varDecRet = $d.varDecRet;} ;
 
-expressionStatement returns [Expression expressionRet]
-    : (e = expression {$expressionRet = $e.expressionRet;})? Semi ;
+expressionStatement returns [Statement statementRet]
+    : (e = expression
+    {
+        $statementRet = new ExpressionStatement($e.expressionRet);
+    })?
+    Semi ;
 
 selectionStatement
     : If LeftParen expression RightParen statement (Else statement)? ;

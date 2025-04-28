@@ -10,7 +10,7 @@ import main.ast.nodes.statement.Statement;
 
 import java.util.List;
 
-public abstract class Expression extends Statement {
+public abstract class Expression extends Node {
 
     //StringExpression
     public void addStringLiteral(String stringliteral){};
@@ -24,6 +24,7 @@ public abstract class Expression extends Statement {
     public void setRightOperand(Expression rightOperand){};
 
     //UnaryExpression
+    public void setPostfix(boolean postfix){};
     public void setUnaryOperator(UnaryOperator unaryOperator){};
     public void setExpression(Expression operand){};
 
@@ -31,8 +32,20 @@ public abstract class Expression extends Statement {
     public void setType(ParamDec type) {}
     public void setInitializers(List<InitializerEntry> initializers) {}
 
+    //ArrayExpression
+    public void setAssigned(Expression assigned) {};
+    public void setIndex(Expression index) {};
 
+    //FunctionCallExpression
+    public void setFunction(Expression function) {};
+    public void setArguments(List<Expression> arguments) {};
+    public void addArgument(Expression argument) {};
 
+    //CommaExpression
+    public void setExpressions(List<Expression> expressions) {};
+    public void addExpression(Expression expression) {};
 
+    //CastExpression
+    public void setTargetType(ParamDec targetType) {};
 
     }

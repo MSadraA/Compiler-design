@@ -1,14 +1,9 @@
-int main{
-x;
-42.5;
-"hello world";
-"first" "second";
+int main() {
+    // Postfix Increment and Decrement
+    x++;
+    x--;
 
-(x);
-(42);
-("abc");
-
-(int){1, 2, 3};
-(float){4.5, 6.7};
-(struct Point){.x = 10, .y = 20};
+    // Prefix Operators
+    ++(--(x++));
+    --x;
 }

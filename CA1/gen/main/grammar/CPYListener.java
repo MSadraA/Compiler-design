@@ -12,6 +12,7 @@ package main.grammar;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
     import main.ast.nodes.expression.initializer.*;
+    import main.ast.nodes.expression.operator.*;
 
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -81,6 +82,46 @@ public interface CPYListener extends ParseTreeListener {
 	 */
 	void exitExpression(CPYParser.ExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CPYParser#prefixexpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrefixexpression(CPYParser.PrefixexpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CPYParser#prefixexpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrefixexpression(CPYParser.PrefixexpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CPYParser#prefixOperator}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrefixOperator(CPYParser.PrefixOperatorContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CPYParser#prefixOperator}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrefixOperator(CPYParser.PrefixOperatorContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CPYParser#postfixExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPostfixExpression(CPYParser.PostfixExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CPYParser#postfixExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPostfixExpression(CPYParser.PostfixExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CPYParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrimaryExpression(CPYParser.PrimaryExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CPYParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrimaryExpression(CPYParser.PrimaryExpressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CPYParser#argumentExpressionList}.
 	 * @param ctx the parse tree
 	 */
@@ -110,6 +151,16 @@ public interface CPYListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCastExpression(CPYParser.CastExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CPYParser#castType}.
+	 * @param ctx the parse tree
+	 */
+	void enterCastType(CPYParser.CastTypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CPYParser#castType}.
+	 * @param ctx the parse tree
+	 */
+	void exitCastType(CPYParser.CastTypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CPYParser#assignmentOperator}.
 	 * @param ctx the parse tree

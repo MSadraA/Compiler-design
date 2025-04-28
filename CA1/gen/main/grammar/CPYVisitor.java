@@ -12,6 +12,7 @@ package main.grammar;
     import main.ast.nodes.statement.*;
     import main.ast.nodes.type.*;
     import main.ast.nodes.expression.initializer.*;
+    import main.ast.nodes.expression.operator.*;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -60,6 +61,30 @@ public interface CPYVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression(CPYParser.ExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CPYParser#prefixexpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrefixexpression(CPYParser.PrefixexpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPYParser#prefixOperator}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrefixOperator(CPYParser.PrefixOperatorContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPYParser#postfixExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPostfixExpression(CPYParser.PostfixExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPYParser#primaryExpression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrimaryExpression(CPYParser.PrimaryExpressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CPYParser#argumentExpressionList}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -77,6 +102,12 @@ public interface CPYVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCastExpression(CPYParser.CastExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CPYParser#castType}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCastType(CPYParser.CastTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CPYParser#assignmentOperator}.
 	 * @param ctx the parse tree
