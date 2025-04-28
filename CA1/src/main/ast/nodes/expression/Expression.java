@@ -6,13 +6,17 @@ import main.ast.nodes.expression.initializer.Initializer;
 import main.ast.nodes.expression.initializer.InitializerEntry;
 import main.ast.nodes.expression.operator.BinaryOperator;
 import main.ast.nodes.expression.operator.UnaryOperator;
+import main.ast.nodes.statement.Statement;
 
 import java.util.List;
 
-public abstract class Expression extends Node {
+public abstract class Expression extends Statement {
 
     //StringExpression
     public void addStringLiteral(String stringliteral){};
+
+    //ConstantExpression
+    public void setValue(String value){};
 
     //BinaryExpression
     public void setBinaryOperator(BinaryOperator binaryOperator){};
@@ -26,6 +30,8 @@ public abstract class Expression extends Node {
     //CompoundLiteralExpression
     public void setType(ParamDec type) {}
     public void setInitializers(List<InitializerEntry> initializers) {}
+
+
 
 
 

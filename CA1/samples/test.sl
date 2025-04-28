@@ -1,6 +1,6 @@
 int main{
 x;
-42;
+42.5;
 "hello world";
 "first" "second";
 

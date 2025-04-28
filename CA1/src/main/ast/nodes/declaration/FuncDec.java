@@ -2,6 +2,7 @@ package main.ast.nodes.declaration;
 
 import main.ast.nodes.specifier.Specifier;
 import main.ast.nodes.declarator.Declarator;
+import main.ast.nodes.statement.CompoundStatement;
 import main.ast.nodes.statement.Statement;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class FuncDec extends Declaration {
     private List<Specifier> specifiers = new ArrayList<>();
     private Declarator declarator;
     private List<VarDec> varDecs = new ArrayList<>();
-    private Statement statement;
+    private CompoundStatement statement;
 
     public void setDeclarator(Declarator declarator) {
         this.declarator = declarator;
@@ -26,7 +27,7 @@ public class FuncDec extends Declaration {
         this.specifiers = specifiers;
     }
 
-    public void setStatement(Statement statement) {
+    public void setStatement(CompoundStatement statement) {
         this.statement = statement;
     }
 

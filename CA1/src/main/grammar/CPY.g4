@@ -33,7 +33,7 @@ functionDefinition returns [FuncDec functionDecRet]:
     (a = declarationSpecifiers{$functionDecRet.setSpecifiers($a.specifiersRet);})?
     b = declarator { $functionDecRet.setDeclarator($b.declaratorRet); }
     (c = declarationList{$functionDecRet.setVarDec($c.varDecsRet);})?
-    d = compoundStatement //todo
+    d = compoundStatement{ $functionDecRet.setStatement($d.compoundStatementRet); }
     ;
 
 declarationList returns [List<VarDec> varDecsRet]:
@@ -49,7 +49,7 @@ expression returns [Expression expressionRet]:
     }
     | Constant
     {
-        $expressionRet = new ConstExpression();
+        $expressionRet = new ConstExpression($Constant.getText());
         $expressionRet.setLine($Constant.getLine());
     }
     | {$expressionRet = new StringExpression();}
@@ -267,10 +267,9 @@ designator returns [Designator designatorRet]
         }
     ;
 
-
 statement returns [Statement statementRet]
     : c = compoundStatement { $statementRet = $c.compoundStatementRet; }
-    | expressionStatement
+    | e = expressionStatement { $statementRet = $e.expressionRet; }
     | selectionStatement | iterationStatement | jumpStatement ;
 
 compoundStatement returns [CompoundStatement compoundStatementRet]:
