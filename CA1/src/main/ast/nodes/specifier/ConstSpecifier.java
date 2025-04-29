@@ -4,4 +4,8 @@ import main.ast.nodes.declarator.pointer.Pointer;
 
 public class ConstSpecifier extends Specifier implements Pointer {
     public ConstSpecifier(){}
+
+    public ConstSpecifier(int line){
+        this.setLine(line);
+    }
 }

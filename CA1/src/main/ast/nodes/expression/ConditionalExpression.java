@@ -12,4 +12,13 @@ public class ConditionalExpression extends Expression{
         this.trueExpression = trueExpression;
         this.falseExpression = falseExpression;
     }
+
+    public ConditionalExpression(Expression condition , Expression trueExpression
+            , Expression falseExpression, int line)
+    {
+        this.condition = condition;
+        this.trueExpression = trueExpression;
+        this.falseExpression = falseExpression;
+        this.setLine(line);
+    }
 }

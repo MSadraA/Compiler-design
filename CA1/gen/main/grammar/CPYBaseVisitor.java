@@ -340,12 +340,5 @@ public class CPYBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements CP
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitForExpression(CPYParser.ForExpressionContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitJumpStatement(CPYParser.JumpStatementContext ctx) { return visitChildren(ctx); }
 }

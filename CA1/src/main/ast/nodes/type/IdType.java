@@ -6,4 +6,9 @@ public class IdType extends Type {
     public IdType(String name){
         this.name = name;
     }
+
+    public IdType(String name , int line){
+        this.name = name;
+        this.setLine(line);
+    }
 }

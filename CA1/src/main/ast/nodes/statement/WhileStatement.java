@@ -13,6 +13,12 @@ public class WhileStatement extends Statement{
         this.body = body;
     }
 
+    public WhileStatement(Expression condition, Statement body , int line){
+        this.condition = condition;
+        this.body = body;
+        this.setLine(line);
+    }
+
     public void setCondition(Expression condition) {
         this.condition = condition;
     }

@@ -14,6 +14,17 @@ public class CompoundLiteralExpression extends Expression {
     public CompoundLiteralExpression(){
     }
 
+    public CompoundLiteralExpression(ParamDec type, List<InitializerEntry> initializers) {
+        this.type = type;
+        this.initializers = initializers;
+    }
+
+    public CompoundLiteralExpression(ParamDec type, List<InitializerEntry> initializers, int line) {
+        this.type = type;
+        this.initializers = initializers;
+        this.setLine(line);
+    }
+
     @Override
     public void setType(ParamDec type) {
         this.type = type;

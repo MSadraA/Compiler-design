@@ -7,6 +7,11 @@ public class ConstExpression extends Expression{
         this.value = value;
     }
 
+    public ConstExpression(String value, int line) {
+        this.value = value;
+        this.setLine(line);
+    }
+
     public ConstExpression() {}
 
     @Override

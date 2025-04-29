@@ -12,6 +12,12 @@ public class CastExpression extends Expression {
         this.expression = expression;
     }
 
+    public CastExpression(ParamDec type, Expression expression, int line) {
+        this.targetType = type;
+        this.expression = expression;
+        this.setLine(line);
+    }
+
     @Override
     public void setTargetType(ParamDec targetType) {
         this.targetType = targetType;

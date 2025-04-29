@@ -7,6 +7,12 @@ public class ArrayExpression extends Expression {
     public ArrayExpression() {
     }
 
+    public ArrayExpression(Expression assigned , Expression index , int line){
+        this.assigned = assigned;
+        this.index = index;
+        this.setLine(line);
+    }
+
     @Override
     public void setAssigned(Expression assigned) {
         this.assigned = assigned;

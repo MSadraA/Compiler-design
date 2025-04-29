@@ -18,6 +18,13 @@ public class UnaryExpression extends Expression{
         this.isPostfix = isPostfix;
     }
 
+    public UnaryExpression(Expression operand, UnaryOperator unaryOperator, Boolean isPostfix , int line){
+        this.operand = operand;
+        this.unaryOperator = unaryOperator;
+        this.isPostfix = isPostfix;
+        this.setLine(line);
+    }
+
     @Override
     public void setUnaryOperator(UnaryOperator unaryOperator) {
         this.unaryOperator = unaryOperator;

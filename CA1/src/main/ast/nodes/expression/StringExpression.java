@@ -8,6 +8,10 @@ public class StringExpression extends Expression{
 
     public StringExpression(){}
 
+    public StringExpression(int line){
+        this.setLine(line);
+    }
+
     @Override
     public void addStringLiteral(String stringliteral){
         this.stringliteral.add(stringliteral);

@@ -289,12 +289,6 @@ public interface CPYVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitForDeclaration(CPYParser.ForDeclarationContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link CPYParser#forExpression}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitForExpression(CPYParser.ForExpressionContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link CPYParser#jumpStatement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
