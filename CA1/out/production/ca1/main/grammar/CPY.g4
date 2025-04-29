@@ -377,7 +377,9 @@ designator returns [Designator designatorRet]
 statement returns [Statement statementRet]
     : c = compoundStatement { $statementRet = $c.compoundStatementRet; }
     | e = expressionStatement { $statementRet = $e.statementRet; }
-    | selectionStatement | iterationStatement | jumpStatement ;
+    | s = selectionStatement { $statementRet = $s.statementRet; }
+    | i = iterationStatement
+    | j = jumpStatement ;
 
 compoundStatement returns [CompoundStatement compoundStatementRet]:
     { $compoundStatementRet = new CompoundStatement(); }
@@ -403,8 +405,11 @@ expressionStatement returns [Statement statementRet]
     })?
     Semi ;
 
-selectionStatement
-    : If LeftParen expression RightParen statement (Else statement)? ;
+selectionStatement returns [IfStatement statementRet]:
+    { $statementRet = new IfStatement();}
+    If LeftParen e = expression {$statementRet.setCondition($e.expressionRet);}
+    RightParen s1 = statement {$statementRet.setThenStatement($s1.statementRet);}
+    (Else s2 = statement {$statementRet.setElseStatement($s2.statementRet);})? ;
 
 iterationStatement
     : While LeftParen expression RightParen statement

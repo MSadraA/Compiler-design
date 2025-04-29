@@ -462,16 +462,6 @@ public interface CPYListener extends ParseTreeListener {
 	 */
 	void exitForDeclaration(CPYParser.ForDeclarationContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link CPYParser#forExpression}.
-	 * @param ctx the parse tree
-	 */
-	void enterForExpression(CPYParser.ForExpressionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link CPYParser#forExpression}.
-	 * @param ctx the parse tree
-	 */
-	void exitForExpression(CPYParser.ForExpressionContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link CPYParser#jumpStatement}.
 	 * @param ctx the parse tree
 	 */

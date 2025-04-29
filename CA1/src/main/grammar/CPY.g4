@@ -183,6 +183,7 @@ unaryOperator returns [UnaryOperator operatorRet]:
     | Not { $operatorRet = UnaryOperator.NOT; }
     ;
 
+
 castExpression returns [Expression expressionRet]
   : castType { $expressionRet = $castType.expressionRet; }
   | expression { $expressionRet = $expression.expressionRet; }
@@ -377,7 +378,9 @@ designator returns [Designator designatorRet]
 statement returns [Statement statementRet]
     : c = compoundStatement { $statementRet = $c.compoundStatementRet; }
     | e = expressionStatement { $statementRet = $e.statementRet; }
-    | selectionStatement | iterationStatement | jumpStatement ;
+    | s = selectionStatement { $statementRet = $s.statementRet; }
+    | i = iterationStatement
+    | j = jumpStatement ;
 
 compoundStatement returns [CompoundStatement compoundStatementRet]:
     { $compoundStatementRet = new CompoundStatement(); }
@@ -403,22 +406,30 @@ expressionStatement returns [Statement statementRet]
     })?
     Semi ;
 
-selectionStatement
-    : If LeftParen expression RightParen statement (Else statement)? ;
+selectionStatement returns [IfStatement statementRet]:
+    { $statementRet = new IfStatement();}
+    If LeftParen e = expression {$statementRet.setCondition($e.expressionRet);}
+    RightParen s1 = statement {$statementRet.setThenStatement($s1.statementRet);}
+    (Else s2 = statement {$statementRet.setElseStatement($s2.statementRet);})? ;
 
-iterationStatement
-    : While LeftParen expression RightParen statement
-    | Do statement While LeftParen expression RightParen Semi
+iterationStatement returns [Statement statementRet]:
+    While LeftParen e = expression RightParen s = statement
+    {$statementRet = new WhileStatement($e.expressionRet , $s.statementRet);}
+    | Do s = statement While LeftParen e = expression RightParen Semi
+    {$statementRet = new DoWhileStatement($e.expressionRet , $s.statementRet);}
     | For LeftParen forCondition RightParen statement ;
 
-forCondition
-    : (forDeclaration | expression?) Semi forExpression? Semi forExpression? ;
+forCondition returns [ForCondStatement forConditionRet]:
+    {$forConditionRet = new ForCondStatement();}
+    (f = forDeclaration {$forConditionRet.setInitDeclaration($f.varDecRet);}
+    | e = expression? { $forConditionRet.setInitExpression($e.expressionRet);})
+    Semi (a1 = argumentExpressionList {$forConditionRet.setConditions($a1.expressionsRet);})?
+    Semi (a2 = argumentExpressionList {$forConditionRet.setConditions($a2.expressionsRet);})? ;
 
-forDeclaration
-    : declarationSpecifiers initDeclaratorList? ;
+forDeclaration returns [VarDec varDecRet]:
+    { $varDecRet = new VarDec(); }
+    declarationSpecifiers initDeclaratorList?;
 
-forExpression
-    : expression (Comma expression)* ;
 
 jumpStatement
     : ( Continue | Break | Return expression? ) Semi ;

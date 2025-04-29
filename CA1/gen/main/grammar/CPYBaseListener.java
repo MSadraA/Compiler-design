@@ -559,18 +559,6 @@ public class CPYBaseListener implements CPYListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForExpression(CPYParser.ForExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitForExpression(CPYParser.ForExpressionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterJumpStatement(CPYParser.JumpStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
