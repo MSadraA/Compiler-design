@@ -56,22 +56,60 @@ expression returns [Expression expressionRet]:
         $expressionRet.setFunction($e.expressionRet);
     }
     LeftParen (a = argumentExpressionList {$expressionRet.setArguments($a.expressionsRet);})? RightParen
-
+    //Unarys
     | e = expression PlusPlus {$expressionRet = new UnaryExpression($e.expressionRet, UnaryOperator.INCREMENT, true);} // Postfix increment
     | e = expression MinusMinus {$expressionRet = new UnaryExpression($e.expressionRet, UnaryOperator.DECREMENT, true);} // Postfix decrement
     | pre = prefixexpression {$expressionRet = $pre.expressionRet;}
-    | c = castType {$expressionRet = $c.expressionRet;}                                // Cast expression
-    //todo
-    | expression (Star | Div | Mod) expression                                      // Multiplicative
-    | expression (Plus | Minus) expression                                          // Additive
-    | expression (LeftShift | RightShift) expression                                // Shift
-    | expression (Less | Greater | LessEqual | GreaterEqual) expression             // Relational
-    | expression (Equal | NotEqual) expression                                      // Equality
-    | expression And expression                                                     // Bitwise AND
-    | expression Xor expression                                                     // Bitwise XOR
-    | expression Or expression                                                      // Bitwise OR
-    | expression AndAnd expression                                                  // Logical AND
-    | expression OrOr expression                                                    // Logical OR
+    | c = castType {$expressionRet = $c.expressionRet;}                             // Cast expression
+    //Binarys
+    | e1 = expression {$expressionRet = new BinaryExpression();
+    $expressionRet.setLeftOperand($e1.expressionRet);}
+    (Star {$expressionRet.setBinaryOperator(BinaryOperator.MUL);}
+    | Div {$expressionRet.setBinaryOperator(BinaryOperator.DIV);}
+    | Mod {$expressionRet.setBinaryOperator(BinaryOperator.MOD);})
+    e2 = expression {$expressionRet.setRightOperand($e2.expressionRet);}// Multiplicative
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      (Plus { $expressionRet.setBinaryOperator(BinaryOperator.PLUS); }
+      | Minus { $expressionRet.setBinaryOperator(BinaryOperator.MINUS); })
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); } // Additive
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      (LeftShift { $expressionRet.setBinaryOperator(BinaryOperator.LEFT_SHIFT); }
+      | RightShift { $expressionRet.setBinaryOperator(BinaryOperator.RIGHT_SHIFT); })
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Shift
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      (Less { $expressionRet.setBinaryOperator(BinaryOperator.LESS_THAN); }
+      | Greater { $expressionRet.setBinaryOperator(BinaryOperator.GREATER_THAN); }
+      | LessEqual { $expressionRet.setBinaryOperator(BinaryOperator.LESS_EQUAL); }
+      | GreaterEqual { $expressionRet.setBinaryOperator(BinaryOperator.GREATER_EQUAL); })
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Relational
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      (Equal { $expressionRet.setBinaryOperator(BinaryOperator.EQUAL); }
+      | NotEqual { $expressionRet.setBinaryOperator(BinaryOperator.NOT_EQUAL); })
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Equality
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      And { $expressionRet.setBinaryOperator(BinaryOperator.BITWISE_AND); }
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Bitwise AND
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      Xor { $expressionRet.setBinaryOperator(BinaryOperator.BITWISE_XOR); }
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Bitwise XOR
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      Or { $expressionRet.setBinaryOperator(BinaryOperator.BITWISE_OR); }
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Bitwise OR
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      AndAnd { $expressionRet.setBinaryOperator(BinaryOperator.AND); }
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Logical AND
+    | e1 = expression { $expressionRet = new BinaryExpression();
+                        $expressionRet.setLeftOperand($e1.expressionRet); }
+      OrOr { $expressionRet.setBinaryOperator(BinaryOperator.OR); }
+      e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Logical OR
 
     | expression Question expression Colon expression                               // Conditional operator
     | expression assignmentOperator expression                                      // Assignment

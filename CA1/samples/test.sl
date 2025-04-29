@@ -1,9 +1,3 @@
 int main() {
-    // Postfix Increment and Decrement
-    x++;
-    x--;
-
-    // Prefix Operators
-    ++(--(x++));
-    --x;
+    (3 + 5) * (8 - 2) + (10 / 2) && 5 < 8 || 4 == 4
 }
