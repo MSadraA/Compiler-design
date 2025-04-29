@@ -111,8 +111,11 @@ expression returns [Expression expressionRet]:
       OrOr { $expressionRet.setBinaryOperator(BinaryOperator.OR); }
       e2 = expression { $expressionRet.setRightOperand($e2.expressionRet); }// Logical OR
 
-    | expression Question expression Colon expression                               // Conditional operator
-    | expression assignmentOperator expression                                      // Assignment
+    | e1 = expression Question e2 = expression Colon e3 = expression// Conditional operator
+    {$expressionRet = new ConditionalExpression($e1.expressionRet , $e2.expressionRet , $e3.expressionRet);}
+
+    | e1 = expression op = assignmentOperator e2 = expression// Assignment
+    {$expressionRet = new BinaryExpression($e1.expressionRet,$e2.expressionRet,$op.binaryOperatorRet);}
     | e1 = expression                                                               // Comma operator
     {
         $expressionRet = new CommaExpression();
@@ -191,8 +194,19 @@ castType returns [Expression expressionRet]:
     { $expressionRet = new CastExpression($t.parameterRet , $c.expressionRet); }
     ;
 
-assignmentOperator
-  : Assign | StarAssign | DivAssign | ModAssign | PlusAssign | MinusAssign | LeftShiftAssign | RightShiftAssign | AndAssign | XorAssign | OrAssign ;
+assignmentOperator returns [BinaryOperator binaryOperatorRet]
+  : Assign {$binaryOperatorRet = BinaryOperator.ASSIGN;}
+  | StarAssign {$binaryOperatorRet = BinaryOperator.MUL_ASSIGN;}
+  | DivAssign {$binaryOperatorRet = BinaryOperator.DIV_ASSIGN;}
+  | ModAssign {$binaryOperatorRet = BinaryOperator.MOD_ASSIGN;}
+  | PlusAssign {$binaryOperatorRet = BinaryOperator.PLUS_ASSIGN;}
+  | MinusAssign {$binaryOperatorRet = BinaryOperator.MINUS_ASSIGN;}
+  | LeftShiftAssign {$binaryOperatorRet = BinaryOperator.LEFT_SHIFT_ASSIGN;}
+  | RightShiftAssign {$binaryOperatorRet = BinaryOperator.RIGHT_SHIFT_ASSIGN;}
+  | AndAssign {$binaryOperatorRet = BinaryOperator.AND_ASSIGN;}
+  | XorAssign {$binaryOperatorRet = BinaryOperator.XOR_ASSIGN;}
+  | OrAssign {$binaryOperatorRet = BinaryOperator.OR_ASSIGN;}
+  ;
 
 declaration returns [VarDec varDecRet]:
     { $varDecRet = new VarDec(); }
