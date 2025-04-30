@@ -1,6 +1,8 @@
 package main.ast.nodes.declarator;
 
 import main.ast.nodes.declarator.pointer.Pointer;
+import main.visitor.IVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,4 +19,9 @@ public class PointerDeclarator extends Declarator{
 
     @Override
     public void setPointers(List<Pointer> pointers) {this.pointers = pointers;}
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

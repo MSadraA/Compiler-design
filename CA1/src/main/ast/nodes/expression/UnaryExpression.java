@@ -1,6 +1,7 @@
 package main.ast.nodes.expression;
 
 import main.ast.nodes.expression.operator.UnaryOperator;
+import main.visitor.IVisitor;
 
 public class UnaryExpression extends Expression{
     private Expression operand;
@@ -38,5 +39,10 @@ public class UnaryExpression extends Expression{
     @Override
     public void setPostfix(boolean postfix) {
         isPostfix = postfix;
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

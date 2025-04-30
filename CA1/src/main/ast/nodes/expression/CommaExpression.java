@@ -1,5 +1,7 @@
 package main.ast.nodes.expression;
 
+import main.visitor.IVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,4 +24,8 @@ public class CommaExpression extends Expression {
         this.expressions.add(expression);
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

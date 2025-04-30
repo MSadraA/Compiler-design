@@ -1,6 +1,7 @@
 package main.ast.nodes.expression;
 
 import main.ast.nodes.expression.operator.BinaryOperator;
+import main.visitor.IVisitor;
 
 public class BinaryExpression extends Expression{
 
@@ -50,4 +51,8 @@ public class BinaryExpression extends Expression{
         return rightOperand;
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

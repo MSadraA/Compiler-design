@@ -1,6 +1,7 @@
 package main.ast.nodes.declarator;
 
 import main.ast.nodes.expression.Expression;
+import main.visitor.IVisitor;
 
 public class ArrayDeclarator extends Declarator{
     private Declarator declarator;
@@ -30,4 +31,9 @@ public class ArrayDeclarator extends Declarator{
         this.expression = expression;
     }
 
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -1,5 +1,7 @@
 package main.ast.nodes.statement;
 
+import main.visitor.IVisitor;
+
 public class ForStatement extends Statement{
     private ForCondStatement condition;
     private Statement body;
@@ -13,5 +15,10 @@ public class ForStatement extends Statement{
         this.condition = condition;
         this.body = body;
         this.setLine(line);
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

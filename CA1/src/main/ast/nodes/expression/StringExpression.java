@@ -1,5 +1,7 @@
 package main.ast.nodes.expression;
 
+import main.visitor.IVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,5 +17,10 @@ public class StringExpression extends Expression{
     @Override
     public void addStringLiteral(String stringliteral){
         this.stringliteral.add(stringliteral);
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -1,6 +1,7 @@
 package main.ast.nodes.statement;
 
 import main.ast.nodes.expression.Expression;
+import main.visitor.IVisitor;
 
 public class DoWhileStatement extends Statement{
     private Expression condition;
@@ -25,5 +26,10 @@ public class DoWhileStatement extends Statement{
 
     public void setBody(Statement body) {
         this.body = body;
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -2,6 +2,7 @@ package main.ast.nodes.declaration;
 
 import main.ast.nodes.declarator.InitDeclarator;
 import main.ast.nodes.specifier.Specifier;
+import main.visitor.IVisitor;
 
 import java.util.List;
 
@@ -23,6 +24,12 @@ public class VarDec extends Declaration{
 
     public void setInitDeclarators(List<InitDeclarator> initDeclarators) {
         this.initDeclarators = initDeclarators;
+    }
+
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }
 

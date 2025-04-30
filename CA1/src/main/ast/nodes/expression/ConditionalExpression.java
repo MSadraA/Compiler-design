@@ -1,5 +1,7 @@
 package main.ast.nodes.expression;
 
+import main.visitor.IVisitor;
+
 public class ConditionalExpression extends Expression{
     private Expression condition;
     private Expression trueExpression;
@@ -20,5 +22,10 @@ public class ConditionalExpression extends Expression{
         this.trueExpression = trueExpression;
         this.falseExpression = falseExpression;
         this.setLine(line);
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -1,5 +1,7 @@
 package main.ast.nodes.expression;
 
+import main.visitor.IVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,4 +29,8 @@ public class FunctionCallExpression extends Expression {
         this.arguments.add(argument);
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

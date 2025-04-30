@@ -2,6 +2,7 @@ package main.ast.nodes.statement;
 
 import main.ast.nodes.declaration.VarDec;
 import main.ast.nodes.expression.Expression;
+import main.visitor.IVisitor;
 
 import java.util.List;
 
@@ -27,4 +28,8 @@ public class ForCondStatement extends Statement{
         this.updateExpressions = updateExpressions;
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

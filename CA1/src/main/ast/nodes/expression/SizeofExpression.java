@@ -1,6 +1,7 @@
 package main.ast.nodes.expression;
 
 import main.ast.nodes.declaration.ParamDec;
+import main.visitor.IVisitor;
 
 public class SizeofExpression extends Expression {
     private ParamDec typeName;
@@ -13,4 +14,8 @@ public class SizeofExpression extends Expression {
         this.setLine(line);
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

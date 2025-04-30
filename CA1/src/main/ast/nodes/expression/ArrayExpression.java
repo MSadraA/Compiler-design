@@ -1,5 +1,7 @@
 package main.ast.nodes.expression;
 
+import main.visitor.IVisitor;
+
 public class ArrayExpression extends Expression {
     private Expression assigned;
     private Expression index;
@@ -20,6 +22,11 @@ public class ArrayExpression extends Expression {
     @Override
     public void setIndex(Expression index) {
         this.index = index;
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }
 

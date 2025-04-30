@@ -2,6 +2,7 @@ package main.ast.nodes.expression.initializer;
 
 import main.ast.nodes.Node;
 import main.ast.nodes.expression.Expression;
+import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,5 +25,10 @@ public class Initializer extends Node {
 
     public void setInitializerList(List<InitializerEntry> initializerList) {
         this.initializerList = initializerList;
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

@@ -2,6 +2,7 @@ package main.ast.nodes.declaration;
 
 import main.ast.nodes.declarator.Declarator;
 import main.ast.nodes.specifier.Specifier;
+import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,5 +20,11 @@ public class ParamDec extends Declaration {
     }
 
     public ParamDec() {
+    }
+
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

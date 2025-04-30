@@ -3,6 +3,7 @@ package main.ast.nodes.expression;
 import main.ast.nodes.declaration.ParamDec;
 import main.ast.nodes.expression.initializer.Initializer;
 import main.ast.nodes.expression.initializer.InitializerEntry;
+import main.visitor.IVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,4 +36,8 @@ public class CompoundLiteralExpression extends Expression {
         this.initializers = initializers;
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

@@ -1,6 +1,8 @@
 package main.ast.nodes.declarator;
 
 import main.ast.nodes.declaration.ParamDec;
+import main.visitor.IVisitor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,4 +29,8 @@ public class FunctionDeclarator extends Declarator{
         this.identifiers = identifiers;
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

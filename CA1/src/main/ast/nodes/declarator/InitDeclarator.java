@@ -1,6 +1,7 @@
 package main.ast.nodes.declarator;
 
 import main.ast.nodes.expression.initializer.Initializer;
+import main.visitor.IVisitor;
 
 public class InitDeclarator extends Declarator{
     private Declarator declarator;
@@ -22,4 +23,8 @@ public class InitDeclarator extends Declarator{
         this.declarator = declarator;
     }
 
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
 }

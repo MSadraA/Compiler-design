@@ -2,6 +2,7 @@ package main.ast.nodes.expression;
 
 import main.ast.nodes.declaration.ParamDec;
 import main.ast.nodes.type.Type;
+import main.visitor.IVisitor;
 
 public class CastExpression extends Expression {
     private ParamDec targetType;
@@ -26,5 +27,10 @@ public class CastExpression extends Expression {
     @Override
     public void setExpression(Expression expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

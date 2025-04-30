@@ -1,5 +1,7 @@
 package main.ast.nodes.declarator;
 
+import main.visitor.IVisitor;
+
 public class IdentifierDeclarator extends Declarator{
     private String identifier; //change to Identifier if needed
 
@@ -18,5 +20,10 @@ public class IdentifierDeclarator extends Declarator{
     @Override
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    @Override
+    public <T> T accept(IVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

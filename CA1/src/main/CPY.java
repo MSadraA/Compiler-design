@@ -6,7 +6,7 @@ import main.grammar.CPYParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
+import main.visitor.*;
 import java.io.IOException;
 
 public class CPY {
@@ -16,9 +16,9 @@ public class CPY {
         CommonTokenStream tokens = new CommonTokenStream(simpleLangLexer);
         CPYParser flParser = new CPYParser(tokens);
         Program program = flParser.program().programRet;
-        System.out.println();
 
-//        TestVisitor my_visitor = new TestVisitor();
-//        my_visitor.visit(program);
+        TestVisitor my_visitor = new TestVisitor();
+        int count = my_visitor.visit(program);
+        System.out.println("Number of statements: " + count);
     }
 }
