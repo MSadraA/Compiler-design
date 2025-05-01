@@ -108,6 +108,9 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(BinaryExpression binaryExpression) {
+        Expression left = binaryExpression.getLeftOperand();
+        Expression right = binaryExpression.getRightOperand();
+        BinaryOperator operator = binaryExpression.getOperator();
         return 0;
     }
 
