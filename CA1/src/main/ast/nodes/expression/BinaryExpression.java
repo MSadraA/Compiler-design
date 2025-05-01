@@ -24,6 +24,18 @@ public class BinaryExpression extends Expression{
         this.setLine(line);
     }
 
+    public Expression getLeftOperand(){
+        return this.leftOperand;
+    }
+
+    public Expression getRightOperand(){
+        return this.rightOperand;
+    }
+    
+    public BinaryOperator getOperator(){
+        return binaryOperator;
+    }
+
     @Override
     public void setBinaryOperator(BinaryOperator binaryOperator) {
         this.binaryOperator = binaryOperator;
