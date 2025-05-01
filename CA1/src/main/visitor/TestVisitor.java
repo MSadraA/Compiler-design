@@ -111,6 +111,8 @@ public class TestVisitor extends Visitor<Integer> {
         Expression left = binaryExpression.getLeftOperand();
         Expression right = binaryExpression.getRightOperand();
         BinaryOperator operator = binaryExpression.getOperator();
+        String opr = getOperatorSymbol (operator);
+        System.out.printl("Line " + left.getLine() + " : Expr " + );
         return 0;
     }
 
@@ -328,6 +330,41 @@ public class TestVisitor extends Visitor<Integer> {
     @Override
     public Integer visit(VoidType voidType) {
         return 0;
+    }
+
+    protected String       getOperatorSymbol(BinaryOperator op) {
+    switch (op) {
+        case EQUAL: return "==";
+        case NOT_EQUAL: return "!=";
+        case GREATER_EQUAL: return ">=";
+        case LESS_EQUAL: return "<=";
+        case GREATER_THAN: return ">";
+        case LESS_THAN: return "<";
+        case PLUS: return "+";
+        case MINUS: return "-";
+        case MUL: return "*";
+        case DIV: return "/";
+        case MOD: return "%";
+        case AND: return "&&";
+        case OR: return "||";
+        case BITWISE_AND: return "&";
+        case BITWISE_OR: return "|";
+        case BITWISE_XOR: return "^";
+        case LEFT_SHIFT: return "<<";
+        case RIGHT_SHIFT: return ">>";
+        case ASSIGN: return "=";
+        case PLUS_ASSIGN: return "+=";
+        case MINUS_ASSIGN: return "-=";
+        case MUL_ASSIGN: return "*=";
+        case DIV_ASSIGN: return "/=";
+        case MOD_ASSIGN: return "%=";
+        case LEFT_SHIFT_ASSIGN: return "<<=";
+        case RIGHT_SHIFT_ASSIGN: return ">>=";
+        case AND_ASSIGN: return "&=";
+        case XOR_ASSIGN: return "^=";
+        case OR_ASSIGN: return "|=";
+        default: return "?";
+        }
     }
 
 }
