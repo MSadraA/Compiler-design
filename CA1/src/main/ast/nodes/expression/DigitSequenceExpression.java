@@ -5,6 +5,10 @@ import main.visitor.IVisitor;
 public class DigitSequenceExpression extends Expression {
     private String value;
 
+    public String getValue() {
+        return value;
+    }
+
     public DigitSequenceExpression(String value) {
         this.value = value;
     }

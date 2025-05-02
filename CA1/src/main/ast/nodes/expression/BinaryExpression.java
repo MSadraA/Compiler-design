@@ -9,6 +9,7 @@ public class BinaryExpression extends Expression{
     private Expression rightOperand;
     private BinaryOperator binaryOperator;
 
+
     public BinaryExpression() { }
     public BinaryExpression(Expression leftOperand, Expression rightOperand,
                             BinaryOperator binaryOperator){
@@ -50,6 +51,8 @@ public class BinaryExpression extends Expression{
     public Expression getRightOperand() {
         return rightOperand;
     }
+
+    public BinaryOperator getOperator(){ return binaryOperator;}
 
     @Override
     public <T> T accept(IVisitor<T> visitor) {

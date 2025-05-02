@@ -8,6 +8,14 @@ import java.util.List;
 public class StringExpression extends Expression{
     private List<String> stringliteral = new ArrayList<>();
 
+    public List<String> getStringLiteral() {
+        return stringliteral;
+    }
+
+    public List<String> getValue() {
+        return stringliteral;
+    }
+
     public StringExpression(){}
 
     public StringExpression(int line){

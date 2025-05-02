@@ -5,34 +5,58 @@ import main.ast.nodes.declaration.*;
 import main.ast.nodes.declarator.pointer.*;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.declarator.*;
+import main.ast.nodes.expression.operator.BinaryOperator;
+import main.ast.nodes.expression.operator.UnaryOperator;
 import main.ast.nodes.specifier.*;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.type.*;
 import main.ast.nodes.expression.initializer.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestVisitor extends Visitor<Integer> {
+
+    private String currentFuncName;
+    private boolean inFunctionDeclarator = false;
+    private List<String> logs = new ArrayList<>();
+
+
     @Override
     public Integer visit(FuncDec funcDec){
-        int count = 0;
+        this.currentFuncName = "";
         CompoundStatement statement = funcDec.getStatement();
+        Declarator declarator = funcDec.getDeclarator();
+        int count = 0;
+
+        if (declarator != null){
+            inFunctionDeclarator = true;
+            declarator.accept(this);
+        }
+        inFunctionDeclarator = false;
+
         if(statement != null){
             count = statement.accept(this);
-            System.out.println(count);
+            logs.add("Line " + statement.getLine() + ": Stmt function " + currentFuncName + " = " + count);
         }
+
+        for (int i = (logs.size() - 1) ; i >= 0 ; i--){
+            System.out.println(logs.get(i));
+        }
+
+        logs.clear();
+        currentFuncName = "";
         return 0;
     }
 
     @Override
     public Integer visit(CompoundStatement compoundStatement){
         int counter = 0;
-        for(Statement statement : compoundStatement.getStatements()){
+        List<BlockItem> items = compoundStatement.getItems();
+        for (int i = items.size() - 1; i >= 0; i--) {
             counter++;
-        }
-        for(Declaration declaration : compoundStatement.getDeclarations()) {
-            counter++;
+            items.get(i).accept(this);
         }
         return counter;
     }
@@ -40,7 +64,7 @@ public class TestVisitor extends Visitor<Integer> {
     @Override
     public Integer visit(Program program) {
         List<Declaration> declarations = program.getDeclarations();
-        for (Declaration declaration : declarations) {
+        for(Declaration declaration : declarations){
             declaration.accept(this);
         }
         return 0;
@@ -58,36 +82,62 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(VarDec varDec) {
-        return 0;
-    }
-
-    @Override
-    public Integer visit(Declarator declarator) {
+        List<InitDeclarator> initDeclarators = varDec.getInitDeclarators();
+        if(initDeclarators != null) {
+            for (int i = initDeclarators.size() - 1; i >= 0; i--) {
+                InitDeclarator initDeclarator = initDeclarators.get(i);
+                initDeclarator.accept(this);
+            }
+        }
         return 0;
     }
 
     @Override
     public Integer visit(ArrayDeclarator arrayDeclarator) {
+        Declarator declarator = arrayDeclarator.getDeclarator();
+        if (declarator != null){
+            declarator.accept(this);
+        }
         return 0;
     }
 
     @Override
     public Integer visit(FunctionDeclarator functionDeclarator) {
+        Declarator declarator = functionDeclarator.getDeclarator();
+        if (declarator != null){
+            declarator.accept(this);
+        }
         return 0;
     }
 
     @Override
     public Integer visit(IdentifierDeclarator identifierDeclarator) {
+        String name = identifierDeclarator.getName();
+        if (name != null && inFunctionDeclarator){
+            currentFuncName = name;
+        }
         return 0;
     }
 
     @Override
     public Integer visit(InitDeclarator initDeclarator) {
+        Declarator declarator = initDeclarator.getDeclarator();
+        Initializer initializer = initDeclarator.getInitializer();
+        if(initializer != null){
+            initializer.accept(this);
+        }
+        if(declarator != null){
+            declarator.accept(this);
+        }
         return 0;
     }
 
     @Override
     public Integer visit(PointerDeclarator pointerDeclarator) {
+        Declarator declarator = pointerDeclarator.getDeclarator();
+        if(declarator != null){
+            declarator.accept(this);
+        }
         return 0;
     }
 
@@ -97,27 +147,40 @@ public class TestVisitor extends Visitor<Integer> {
     }
 
     @Override
-    public Integer visit(Expression expression) {
-        return 0;
-    }
-
-    @Override
     public Integer visit(ArrayExpression arrayExpression) {
+        Expression assigned = arrayExpression.getAssigned();
+        Expression index = arrayExpression.getIndex();
+        if(assigned != null){
+            assigned.accept(this);
+            return 0;
+        }
+        if(index != null){
+            index.accept(this);
+        }
         return 0;
     }
 
     @Override
     public Integer visit(BinaryExpression binaryExpression) {
+        BinaryOperator operator = binaryExpression.getOperator();
+
+        logs.add("Line " + binaryExpression.getLine() + ": Expr " + operator.getSymbol());
         return 0;
     }
 
     @Override
     public Integer visit(CastExpression castExpression) {
+        Expression expression = castExpression.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
         return 0;
     }
 
     @Override
     public Integer visit(CommaExpression commaExpression) {
+        List<Expression> expressions = commaExpression.getExpressions();
+        logs.add("Line :" + commaExpression.getLine() + ": Expr ,");
         return 0;
     }
 
@@ -128,26 +191,53 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(ConditionalExpression conditionalExpression) {
+        Expression condition = conditionalExpression.getCondition();
+        Expression trueExpression = conditionalExpression.getTrueExpression();
+        Expression falseExpression = conditionalExpression.getFalseExpression();
+        if(condition != null){
+            condition.accept(this);
+            return 0;
+        }
+        if(trueExpression != null){
+            trueExpression.accept(this);
+            return 0;
+        }
+        if(falseExpression != null){
+            falseExpression.accept(this);
+        }
         return 0;
     }
 
     @Override
     public Integer visit(ConstExpression constExpression) {
+        logs.add("Line " + constExpression.getLine() + ": Expr " + constExpression.getValue());
         return 0;
     }
 
     @Override
     public Integer visit(DigitSequenceExpression digitSequenceExpression) {
+        logs.add("Line " + digitSequenceExpression.getLine() + ": Expr " + digitSequenceExpression.getValue());
         return 0;
     }
 
     @Override
     public Integer visit(FunctionCallExpression functionCallExpression) {
+        Expression function = functionCallExpression.getFunction();
+        List<Expression> argument = functionCallExpression.getArguments();
+        if(function != null){
+            function.accept(this);
+            return 0;
+        }
+        if(argument != null){
+            argument.getFirst().accept(this);
+        }
         return 0;
     }
 
     @Override
     public Integer visit(IdExpression idExpression) {
+        String expressionVal = "Line " + idExpression.getLine() + ": Expr " + idExpression.getValue();
+        logs.add(expressionVal);
         return 0;
     }
 
@@ -158,16 +248,27 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(StringExpression stringExpression) {
+        String value = String.join(" " , stringExpression.getValue());
+        String expressionVal = "Line " + stringExpression.getLine() + ": Expr " + value;
+        logs.add(expressionVal);
+
         return 0;
     }
 
     @Override
     public Integer visit(UnaryExpression unaryExpression) {
+        Expression expression = unaryExpression.getOperand();
+        UnaryOperator operator = unaryExpression.getOperator();
+        logs.add("Line " + unaryExpression.getLine() + ": Expr " + operator.getSymbol());
         return 0;
     }
 
     @Override
     public Integer visit(Initializer initializer) {
+        Expression expression = initializer.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
         return 0;
     }
 
@@ -207,28 +308,31 @@ public class TestVisitor extends Visitor<Integer> {
     }
 
     @Override
-    public Integer visit(Statement statement) {
-        return 0;
-    }
-
-    @Override
     public Integer visit(BreakStatement breakStatement) {
-        return 0;
+        return 1;
     }
 
     @Override
     public Integer visit(ContinueStatement continueStatement) {
-        return 0;
+        return 1;
     }
 
     @Override
     public Integer visit(DoWhileStatement doWhileStatement) {
-        return 0;
+        Statement body = doWhileStatement.getBody();
+        if (body != null){
+            body.accept(this);
+        }
+        return 1;
     }
 
     @Override
     public Integer visit(ExpressionStatement expressionStatement) {
-        return 0;
+        Expression expression = expressionStatement.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
+        return 1;
     }
 
     @Override
@@ -238,7 +342,12 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(ForStatement forStatement) {
-        return 0;
+        Statement body = forStatement.getBody();
+        if (body != null){
+            int count = body.accept(this);
+            logs.add("Line " + forStatement.getLine() + ": Stmt for = " + (count));
+        }
+        return 1;
     }
 
     @Override
@@ -246,25 +355,49 @@ public class TestVisitor extends Visitor<Integer> {
         Expression condition = ifStatement.getCondition();
         Statement thenStatement = ifStatement.getThenStatement();
         Statement elseStatement = ifStatement.getElseStatement();
-        if(condition != null){
-            int count = condition.accept(this);
-            System.out.println();
+
+        if(elseStatement != null){
+            int count = elseStatement.accept(this);
+            if (!(elseStatement instanceof IfStatement))
+                logs.add("Line " + elseStatement.getLine() + ": Stmt selection = " + count);
         }
+
         if(thenStatement != null){
             int count = thenStatement.accept(this);
-            System.out.println();
+            logs.add("Line " + thenStatement.getLine() + ": Stmt selection = " + count);
         }
-        return 0;
+
+        if(condition != null){
+            condition.accept(this);
+        }
+
+        return 1;
     }
+
 
     @Override
     public Integer visit(ReturnStatement returnStatement) {
-        return 0;
+        Expression expression = returnStatement.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
+        return 1;
     }
 
     @Override
     public Integer visit(WhileStatement whileStatement) {
-        return 0;
+        Statement body = whileStatement.getBody();
+        Expression condition = whileStatement.getCondition();
+
+        if(body != null){
+            int count = body.accept(this);
+            logs.add("Line " + whileStatement.getLine() + ": Stmt While = " + count);
+        }
+
+        if (condition != null){
+            condition.accept(this);
+        }
+        return 1;
     }
 
     @Override

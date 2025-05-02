@@ -21,6 +21,10 @@ public class ArrayDeclarator extends Declarator{
         this.setLine(line);
     }
 
+    public Declarator getDeclarator() {
+        return declarator;
+    }
+
     @Override
     public void setDeclarator(Declarator declarator) {
         this.declarator = declarator;

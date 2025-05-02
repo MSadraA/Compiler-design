@@ -19,6 +19,5 @@ public class CPY {
 
         TestVisitor my_visitor = new TestVisitor();
         int count = my_visitor.visit(program);
-        System.out.println("Number of statements: " + count);
     }
 }

@@ -27,4 +27,5 @@ public abstract class Declarator extends Node {
     public void setPointers(List<Pointer> pointers){
 
     }
+
 }

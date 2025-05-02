@@ -10,6 +10,10 @@ public class ExpressionStatement extends Statement{
 
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     public ExpressionStatement(Expression expression){
         this.expression = expression;
     }

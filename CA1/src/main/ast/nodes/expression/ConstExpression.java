@@ -5,6 +5,10 @@ import main.visitor.IVisitor;
 public class ConstExpression extends Expression{
     private String value;
 
+    public String getValue() {
+        return value;
+    }
+
     public ConstExpression(String value) {
         this.value = value;
     }

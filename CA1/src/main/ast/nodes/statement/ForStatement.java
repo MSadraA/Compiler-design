@@ -6,6 +6,10 @@ public class ForStatement extends Statement{
     private ForCondStatement condition;
     private Statement body;
 
+    public Statement getBody() {
+        return body;
+    }
+
     public ForStatement(ForCondStatement condition, Statement body) {
         this.condition = condition;
         this.body = body;

@@ -10,9 +10,12 @@ import java.util.List;
 public class CompoundStatement extends Statement{
     private List<Statement> statements = new ArrayList<>();
     private List<Declaration> declarations = new ArrayList<>();
+    private List<BlockItem> items = new ArrayList<>();
 
     public CompoundStatement() {
     }
+
+    public List<BlockItem> getItems() { return this.items; }
 
     public List<Statement> getStatements() {
         return this.statements;
@@ -22,12 +25,15 @@ public class CompoundStatement extends Statement{
         return this.declarations;
     }
 
-    public void addStatement(Statement statement){
+    public void addStatement(Statement statement)
+    {
         this.statements.add(statement);
+        this.items.add(statement);
     }
 
     public void addVarDec(VarDec declaration){
         this.declarations.add(declaration);
+        this.items.add(declaration);
     }
 
     @Override

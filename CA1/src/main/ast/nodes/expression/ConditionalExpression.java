@@ -7,6 +7,18 @@ public class ConditionalExpression extends Expression{
     private Expression trueExpression;
     private Expression falseExpression;
 
+    public Expression getCondition() {
+        return condition;
+    }
+
+    public Expression getTrueExpression() {
+        return trueExpression;
+    }
+
+    public Expression getFalseExpression() {
+        return falseExpression;
+    }
+
     public ConditionalExpression(Expression condition , Expression trueExpression
             , Expression falseExpression)
     {

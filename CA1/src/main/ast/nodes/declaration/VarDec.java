@@ -10,6 +10,10 @@ public class VarDec extends Declaration{
     private List<Specifier> specifiers;
     private List<InitDeclarator> initDeclarators;
 
+    public List<InitDeclarator> getInitDeclarators(){
+        return initDeclarators;
+    }
+
     public VarDec(List<Specifier> specifiers, List<InitDeclarator> initDeclarators) {
         this.specifiers = specifiers;
         this.initDeclarators = initDeclarators;

@@ -6,6 +6,10 @@ import main.visitor.IVisitor;
 public class ReturnStatement extends Statement{
     private Expression expression;
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     public ReturnStatement(){}
 
     public ReturnStatement(Expression expression) {

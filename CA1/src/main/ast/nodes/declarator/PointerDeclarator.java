@@ -12,6 +12,10 @@ public class PointerDeclarator extends Declarator{
 
     public PointerDeclarator(){}
 
+    public Declarator getDeclarator() {
+        return declarator;
+    }
+
     @Override
     public void setDeclarator(Declarator declarator) {
         this.declarator = declarator;

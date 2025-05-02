@@ -6,6 +6,14 @@ public class ArrayExpression extends Expression {
     private Expression assigned;
     private Expression index;
 
+    public Expression getAssigned() {
+        return assigned;
+    }
+
+    public Expression getIndex() {
+        return index;
+    }
+
     public ArrayExpression() {
     }
 

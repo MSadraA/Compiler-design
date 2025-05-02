@@ -14,6 +14,10 @@ public class FunctionDeclarator extends Declarator{
     public FunctionDeclarator() {
     }
 
+    public Declarator getDeclarator() {
+        return declarator;
+    }
+
     @Override
     public void setDeclarator(Declarator declarator) {
         this.declarator = declarator;

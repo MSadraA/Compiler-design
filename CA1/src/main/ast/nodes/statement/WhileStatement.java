@@ -7,6 +7,14 @@ public class WhileStatement extends Statement{
     private Expression condition;
     private Statement body;
 
+    public Statement getBody() {
+        return body;
+    }
+
+    public Expression getCondition() {
+        return condition;
+    }
+
     public WhileStatement(){}
 
     public WhileStatement(Expression condition, Statement body) {

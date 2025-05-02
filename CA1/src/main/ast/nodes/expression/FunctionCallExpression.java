@@ -9,6 +9,14 @@ public class FunctionCallExpression extends Expression {
     private Expression function;
     private List<Expression> arguments = new ArrayList<>();
 
+    public Expression getFunction() {
+        return function;
+    }
+
+    public List<Expression> getArguments() {
+        return arguments;
+    }
+
     public FunctionCallExpression() {
     }
 

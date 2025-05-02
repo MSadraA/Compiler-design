@@ -12,6 +12,10 @@ public class CommaExpression extends Expression {
     public CommaExpression() {
     }
 
+    public List<Expression> getExpressions() {
+        return expressions;
+    }
+
     public CommaExpression(List<Expression> expressions) {
         this.expressions = expressions;
     }

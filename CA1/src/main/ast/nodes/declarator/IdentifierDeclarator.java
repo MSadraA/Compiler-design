@@ -3,7 +3,7 @@ package main.ast.nodes.declarator;
 import main.visitor.IVisitor;
 
 public class IdentifierDeclarator extends Declarator{
-    private String identifier; //change to Identifier if needed
+    private String identifier = ""; //change to Identifier if needed
 
     public IdentifierDeclarator(){
     }
@@ -15,6 +15,10 @@ public class IdentifierDeclarator extends Declarator{
     public IdentifierDeclarator(String identifier, int line) {
         this.identifier = identifier;
         this.setLine(line);
+    }
+
+    public String getName(){
+        return this.identifier;
     }
 
     @Override

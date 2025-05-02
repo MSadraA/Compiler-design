@@ -8,6 +8,10 @@ public class CastExpression extends Expression {
     private ParamDec targetType;
     private Expression expression;
 
+    public Expression getExpression() {
+        return expression;
+    }
+
     public CastExpression(ParamDec type, Expression expression) {
         this.targetType = type;
         this.expression = expression;

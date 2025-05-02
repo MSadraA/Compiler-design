@@ -8,6 +8,14 @@ public class UnaryExpression extends Expression{
     protected UnaryOperator unaryOperator;
     private boolean isPostfix;
 
+    public Expression getOperand() {
+        return operand;
+    }
+
+    public UnaryOperator getOperator() {
+        return unaryOperator;
+    }
+
     public UnaryExpression() { }
     public UnaryExpression(Expression operand, UnaryOperator unaryOperator){
         this.operand = operand;

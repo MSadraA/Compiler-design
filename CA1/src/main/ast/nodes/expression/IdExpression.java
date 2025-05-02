@@ -5,6 +5,10 @@ import main.visitor.IVisitor;
 public class IdExpression extends Expression {
     private String name;
 
+    public String getValue() {
+        return name;
+    }
+
     public IdExpression(String name){
         this.name = name;
     }

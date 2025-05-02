@@ -7,6 +7,14 @@ public class InitDeclarator extends Declarator{
     private Declarator declarator;
     private Initializer initializer;
 
+    public Initializer getInitializer(){
+        return initializer;
+    }
+
+    public Declarator getDeclarator() {
+        return declarator;
+    }
+
     public InitDeclarator(Declarator declarator, Initializer initializer) {
         this.declarator = declarator;
         this.initializer = initializer;
