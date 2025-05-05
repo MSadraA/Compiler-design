@@ -10,6 +10,11 @@ public class ForStatement extends Statement{
         return body;
     }
 
+    @Override
+    public void setBody(Statement body) {
+        this.body = body;
+    }
+
     public ForStatement(ForCondStatement condition, Statement body) {
         this.condition = condition;
         this.body = body;

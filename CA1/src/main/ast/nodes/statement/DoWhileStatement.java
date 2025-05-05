@@ -28,6 +28,7 @@ public class DoWhileStatement extends Statement{
         this.condition = condition;
     }
 
+    @Override
     public void setBody(Statement body) {
         this.body = body;
     }

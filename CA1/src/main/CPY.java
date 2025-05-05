@@ -17,6 +17,9 @@ public class CPY {
         CPYParser flParser = new CPYParser(tokens);
         Program program = flParser.program().programRet;
 
+        CpyVisitor cpyVisitor = new CpyVisitor();
+        cpyVisitor.visit(program);
+
         TestVisitor my_visitor = new TestVisitor();
         int count = my_visitor.visit(program);
     }

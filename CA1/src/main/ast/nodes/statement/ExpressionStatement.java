@@ -7,7 +7,6 @@ public class ExpressionStatement extends Statement{
     private Expression expression;
 
     public ExpressionStatement(){
-
     }
 
     public Expression getExpression() {

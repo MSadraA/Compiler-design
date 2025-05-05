@@ -1,5 +1,4 @@
 grammar CPY;
-
 @header{
     import java.util.ArrayList;
     import java.util.List;
@@ -13,7 +12,11 @@ grammar CPY;
     import main.ast.nodes.type.*;
     import main.ast.nodes.expression.initializer.*;
     import main.ast.nodes.expression.operator.*;
+    import java.util.LinkedList;
+    import java.util.Stack;
+    import org.antlr.v4.runtime.*;
 }
+
 
 
 program returns [Program programRet]:
@@ -27,7 +30,7 @@ translationUnit returns [Program programRet]:
 externalDeclaration returns [Declaration declarationRet]:
     f=functionDefinition { $declarationRet = $f.functionDecRet; }
     | d=declaration { $declarationRet = $d.varDecRet; }
-    | Semi { $declarationRet = null; }
+    | NEWLINE { $declarationRet = null; }
     ;
 
 functionDefinition returns [FuncDec functionDecRet]:
@@ -35,8 +38,10 @@ functionDefinition returns [FuncDec functionDecRet]:
     (a = declarationSpecifiers{$functionDecRet.setSpecifiers($a.specifiersRet);})?
     b = declarator { $functionDecRet.setDeclarator($b.declaratorRet); }
     (c = declarationList{$functionDecRet.setVarDec($c.varDecsRet);})?
-    d = compoundStatement{ $functionDecRet.setStatement($d.compoundStatementRet); }
-    {$functionDecRet.setLine($d.compoundStatementRet.getLine());}
+    Colon
+    d = compoundStatement{ $functionDecRet.setStatement($d.compoundStatementRet);}
+    End
+    {$functionDecRet.setLine($Colon.getLine());}
     ;
 
 declarationList returns [List<VarDec> varDecsRet]:
@@ -221,8 +226,8 @@ assignmentOperator returns [BinaryOperator binaryOperatorRet]
 declaration returns [VarDec varDecRet]:
     { $varDecRet = new VarDec(); }
     d = declarationSpecifiers { $varDecRet.setSpecifiers($d.specifiersRet); }
-    (i = initDeclaratorList { $varDecRet.setInitDeclarators($i.initDeclaratorsRet);})? Semi
-    {$varDecRet.setLine($Semi.getLine());}
+    (i = initDeclaratorList { $varDecRet.setInitDeclarators($i.initDeclaratorsRet);})? NEWLINE
+    {$varDecRet.setLine($NEWLINE.getLine());}
     ;
 
 declarationSpecifiers returns [List<Specifier> specifiersRet]
@@ -419,19 +424,25 @@ statement returns [Statement statementRet]
     | i = iterationStatement { $statementRet = $i.statementRet; }
     | j = jumpStatement { $statementRet = $j.statementRet; };
 
-compoundStatement returns [CompoundStatement compoundStatementRet]:
+compoundStatement returns [CompoundStatement compoundStatementRet]
+    @init { Integer count = 0; }
+    :
     { $compoundStatementRet = new CompoundStatement(); }
-    LeftBrace ((b = blockItem
+    nl = NEWLINE { $compoundStatementRet.setLine($nl.getLine());}
+    ((NEWLINE* (Tab {count++;})+ b = blockItem
     {
         if ($b.varDecRet != null) {
             $compoundStatementRet.addVarDec($b.varDecRet);
+            $b.varDecRet.setIndentLevel(count);
+            count = 0;
         }
         else if ($b.statementRet != null) {
             $compoundStatementRet.addStatement($b.statementRet);
+            $b.statementRet.setIndentLevel(count);
+            count = 0;
         }
     }
-    )+)? RightBrace
-    {  $compoundStatementRet.setLine($LeftBrace.getLine());}
+    NEWLINE*)+)?
     ;
 
 blockItem returns [Statement statementRet , VarDec varDecRet]
@@ -441,23 +452,27 @@ blockItem returns [Statement statementRet , VarDec varDecRet]
 expressionStatement returns [ExpressionStatement statementRet]:
     {$statementRet = new ExpressionStatement();}
     (e = expression {$statementRet.setExpression($e.expressionRet);})?
-    Semi {$statementRet.setLine($Semi.getLine());}
+    NEWLINE {$statementRet.setLine($NEWLINE.getLine());}
     ;
 
-selectionStatement returns [IfStatement statementRet]:
+selectionStatement returns [IfStatement statementRet]
+    @init {int thenIndent = 0; int elseIndent = 0; }
+    :
     { $statementRet = new IfStatement();}
-    If LeftParen e = expression {$statementRet.setCondition($e.expressionRet);}
-    RightParen s1 = statement {$statementRet.setThenStatement($s1.statementRet);}
-    (Else s2 = statement {$statementRet.setElseStatement($s2.statementRet);})?
-    {$statementRet.setLine($If.getLine());}
+    If {$statementRet.setLine($If.getLine());} LeftParen e = expression {$statementRet.setCondition($e.expressionRet);}
+    RightParen Colon s1 = statement {$statementRet.setThenStatement($s1.statementRet);}
+    (NEWLINE* (Tab {thenIndent++;})+ Else s2 = statement
+    {$statementRet.setElseStatement($s2.statementRet); $s2.statementRet.setIndentLevel(thenIndent);}
+    | NEWLINE* (Tab {elseIndent++;})+ Else Colon s3 = compoundStatement
+    {$statementRet.setElseStatement($s3.compoundStatementRet);})?
     ;
 
 iterationStatement returns [Statement statementRet]:
-    While LeftParen e = expression RightParen s = statement
+    While LeftParen e = expression RightParen Colon s = statement
     {$statementRet = new WhileStatement($e.expressionRet , $s.statementRet , $While.getLine());}
-    | Do s = statement While LeftParen e = expression RightParen Semi
+    | Do Colon s = statement (NEWLINE* Tab+) While LeftParen e = expression RightParen NEWLINE
     {$statementRet = new DoWhileStatement($e.expressionRet , $s.statementRet , $Do.getLine());}
-    | For LeftParen f = forCondition RightParen s = statement
+    | For LeftParen f = forCondition RightParen Colon s = statement
     {$statementRet = new ForStatement($f.forConditionRet , $s.statementRet , $For.getLine());}
     ;
 
@@ -482,10 +497,11 @@ jumpStatement returns [Statement statementRet]:
      | Break {$statementRet = new BreakStatement();}
      | Return {$statementRet = new ReturnStatement();}
      (e = expression {$statementRet = new ReturnStatement($e.expressionRet);})? )
-     Semi
-     {$statementRet.setLine($Semi.getLine());}
+     NEWLINE
+     {$statementRet.setLine($NEWLINE.getLine());}
      ;
 
+End                   : 'end'                   ;
 Break                 : 'break'                 ;
 Char                  : 'char'                  ;
 Const                 : 'const'                 ;
@@ -553,6 +569,7 @@ Equal                 : '=='                    ;
 NotEqual              : '!='                    ;
 Arrow                 : '->'                    ;
 Dot                   : '.'                     ;
+Tab                   : ('\t' | ('    '))       ;
 
 Identifier
     : IdentifierNondigit (IdentifierNondigit | Digit)* ;
@@ -690,11 +707,15 @@ MultiLineMacro
 Directive
     : '#' ~[\n]* -> channel(HIDDEN) ;
 
-Whitespace
-    : [ \t]+ -> channel(HIDDEN) ;
 
-Newline
-    : ('\r' '\n'? | '\n') -> channel(HIDDEN) ;
+fragment SPACES : (' ' | '\t')+ ;
+
+
+NEWLINE
+    : ('\r'? '\n');
+
+Whitespace
+    : ( [ ] ) -> skip ;
 
 BlockComment
     : '/*' .*? '*/' -> channel(HIDDEN) ;

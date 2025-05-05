@@ -32,6 +32,7 @@ public class WhileStatement extends Statement{
         this.condition = condition;
     }
 
+    @Override
     public void setBody(Statement body) {
         this.body = body;
     }

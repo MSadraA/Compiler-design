@@ -56,15 +56,6 @@ public class BinaryExpression extends Expression{
         return binaryOperator;
     }
 
-    public Expression getLeftOperand() {
-        return leftOperand;
-    }
-
-    public Expression getRightOperand() {
-        return rightOperand;
-    }
-
-    public BinaryOperator getOperator(){ return binaryOperator;}
 
     @Override
     public <T> T accept(IVisitor<T> visitor) {

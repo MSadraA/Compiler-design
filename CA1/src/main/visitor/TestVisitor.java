@@ -53,7 +53,7 @@ public class TestVisitor extends Visitor<Integer> {
     @Override
     public Integer visit(CompoundStatement compoundStatement){
         int counter = 0;
-        List<BlockItem> items = compoundStatement.getItems();
+        List<BlockItem> items = compoundStatement.getSelfItems();
         for (int i = items.size() - 1; i >= 0; i--) {
             counter++;
             items.get(i).accept(this);

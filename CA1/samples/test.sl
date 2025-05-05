@@ -1,7 +1,13 @@
-int main(){
-    if (number == reversed) {
-        printf("%d is a palindrome.\n", number);
-    } else {
-        printf("%d is not a palindrome.\n", number);
-    }
-}
+int main():
+    if(1):
+        int x
+        if(2):
+            int y
+        int z
+    else if(2):
+        int a
+        int b
+    else:
+        int c
+    int d
+end

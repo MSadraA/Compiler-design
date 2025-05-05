@@ -7,15 +7,21 @@ import main.visitor.IVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CompoundStatement extends Statement{
+public class CompoundStatement extends Statement {
     private List<Statement> statements = new ArrayList<>();
     private List<Declaration> declarations = new ArrayList<>();
     private List<BlockItem> items = new ArrayList<>();
 
+    private List<Statement> self_statements = new ArrayList<>();
+    private List<Declaration> self_decleration = new ArrayList<>();
+    private List<BlockItem> self_items = new ArrayList<>();
+
     public CompoundStatement() {
     }
 
-    public List<BlockItem> getItems() { return this.items; }
+    public List<BlockItem> getItems() {
+        return this.items;
+    }
 
     public List<Statement> getStatements() {
         return this.statements;
@@ -25,15 +31,48 @@ public class CompoundStatement extends Statement{
         return this.declarations;
     }
 
-    public void addStatement(Statement statement)
-    {
+    public List<BlockItem> getSelfItems() {
+        return this.self_items;
+    }
+
+    public List<Statement> getSelfStatements() {
+        return this.self_statements;
+    }
+
+    public List<Declaration> getSelfDeclarations() {
+        return this.self_decleration;
+    }
+
+    public void addStatement(Statement statement) {
         this.statements.add(statement);
         this.items.add(statement);
     }
 
-    public void addVarDec(VarDec declaration){
+    public void addVarDec(VarDec declaration) {
         this.declarations.add(declaration);
         this.items.add(declaration);
+    }
+
+    public void addSelfStatement(Statement statement) {
+        this.self_statements.add(statement);
+        this.self_items.add(statement);
+    }
+
+    public void addSelfVarDec(VarDec declaration) {
+        this.self_decleration.add(declaration);
+        this.self_items.add(declaration);
+    }
+
+    public void removeBlockItem(BlockItem item) {
+        this.items.remove(item);
+        if (item instanceof VarDec) {
+            this.declarations.remove(item);
+            this.self_decleration.remove(item);
+        } else if (item instanceof Statement) {
+            this.statements.remove(item);
+            this.self_statements.remove(item);
+        }
+        this.self_items.remove(item);
     }
 
     @Override
