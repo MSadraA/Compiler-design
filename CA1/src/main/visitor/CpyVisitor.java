@@ -20,6 +20,8 @@ import java.util.List;
 public class CpyVisitor extends Visitor<Void> {
     private Deque<Node> nodeStack = new ArrayDeque<>();
     private Deque<Node> callStack = new ArrayDeque<>();
+    private Deque<Boolean> ifChainStack = new ArrayDeque<>();
+
     private int currentIndentLevel = 0;
     private boolean not_in_chain = true;
 
@@ -50,8 +52,11 @@ public class CpyVisitor extends Visitor<Void> {
                         callStack.peek() instanceof CompoundStatement &&
                         ((CompoundStatement) callStack.peek()).getIndentLevel() == compoundStatement.getIndentLevel();
 
+        compoundStatement.setIndentLevel(currentIndentLevel);
+
         if (isRedundantCompound) {
             for (BlockItem item : items) {
+                not_in_chain = true;
                 item.accept(this);
             }
             return null;
@@ -67,7 +72,6 @@ public class CpyVisitor extends Visitor<Void> {
         }
 
         callStack.pop();
-        currentIndentLevel--;
         return null;
     }
 
@@ -110,21 +114,29 @@ public class CpyVisitor extends Visitor<Void> {
 
     @Override
     public Void visit(IfStatement ifStatement) {
+        Statement thenStatement = ifStatement.getThenStatement();
+        Statement elseStatement = ifStatement.getElseStatement();
         callStack.push(ifStatement);
         int indent = ifStatement.getIndentLevel();
-        if (not_in_chain  || checkIndentLevel(indent)){
-            attachToParentByIndentLevel(ifStatement , indent);
-            not_in_chain = false;
+        checkIndentLevel(indent);
+        if(not_in_chain) {
+            attachToParentByIndentLevel(ifStatement, indent);
         }
 
-        if (ifStatement.getThenStatement() != null) {
-            ifStatement.getThenStatement().accept(this);
+        if (thenStatement != null) {
+            not_in_chain = true;
+            thenStatement.accept(this);
         }
-        if (ifStatement.getElseStatement() != null) {
-            currentIndentLevel --;
-            ifStatement.getElseStatement().accept(this);
+        if(elseStatement == null){
+            not_in_chain = true;
+            nodeStack.pop();
+            currentIndentLevel = indent;
         }
-        not_in_chain = true;
+        else {
+            not_in_chain = false;
+            currentIndentLevel = indent;
+            elseStatement.accept(this);
+        }
         callStack.pop();
         return null;
     }
@@ -323,13 +335,13 @@ public class CpyVisitor extends Visitor<Void> {
         throw new RuntimeException("RUN TIME ERROR - parent not found");
     }
 
-    private boolean checkIndentLevel(int indentLevel) {
+    private void checkIndentLevel(int indentLevel) {
         if ((indentLevel < currentIndentLevel)){
             nodeStack.pop();
             currentIndentLevel --;
-            return true;
+            return;
         }
-        return false;
+        return;
     }
 
     private void printStack() {
