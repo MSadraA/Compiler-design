@@ -18,7 +18,6 @@ grammar CPY;
 }
 
 
-
 program returns [Program programRet]:
     (t = translationUnit { $programRet = $t.programRet; })? EOF ;
 
@@ -712,7 +711,7 @@ fragment SPACES : (' ' | '\t')+ ;
 
 
 NEWLINE
-    : ('\r'? '\n');
+    : ((Tab | '//' ~[\r\n]*) | ' ')* '\r'? '\n' ;
 
 Whitespace
     : ( [ ] ) -> skip ;
