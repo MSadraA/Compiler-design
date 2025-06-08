@@ -1,14 +1,8 @@
-FuncDec hello(){
-    how_are_you();          //Undeclared function "how_are_you"
-}
-
-main() {
-    int b;
-    b = 10;
-    if (b + a + test())         //Undeclared function "test"   //Undeclared variable "a"
-        b = b + 5;
-    else
-        x();                     //Undeclared function "x"
-
-    int b;                       //Redeclaration of "b"
-}
+main():
+    int b          // Declare an integer variable b
+    b = 10         // Assign value 10 to b
+    if (b):          // Check if b is non-zero
+        b = b + 5  // If true, add 5 to b
+    else:
+        b = 0      // If false, set b to 0
+end

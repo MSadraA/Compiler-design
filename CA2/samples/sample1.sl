@@ -1,22 +1,25 @@
-FuncDec first_func(){
-    int apple;
-    apple = 10;
-    return apple;
-} 
+FuncDec first_func():
+    int apple
+    apple = 10
+    return apple
+end
 
-FuncDec second_func(){
-    int banana;
-    if(1)
-        if(1)
-            int y;
+FuncDec second_func():
+    int banana
+    banana = 33 / three
+    string hello
+    hello = "hello"
+    return true
+end
 
-    banana = 33 / three;        //Undeclared variable "three"
-    return banana;
-}
 
-main(){
-    int test;
-    test = 50;
-    int tmp;
-    tmp = 55++ + 10 * second_func() + first_func();
-}
+
+main():
+    int test
+    test = 50
+    int tmp
+    if(second_func):
+        tmp = 55++ + 10 * first_func + first_func()
+    else
+        tmp = test
+end

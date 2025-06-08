@@ -1,22 +1,17 @@
 FuncDec foo() {
-    int x;
-    x = 3;
-    Print();                    // undefined function "Print"
-    if (x)
-        x = x + 2;
-    else
-        x = 1;
-}
+    int x;          // Declare an integer variable x
+    x = 3;          // Assign value 3 to x
+    Print();        // Function call (assumes Print is a defined function)
 
-FuncDec foo(){                  // Redefinition of foo
-    int x;
-    int x;                      //Redeclaration of "x"
+    if (x)          // If x is non-zero
+        x = x + 2;  // Add 2 to x
+    else
+        x = 1;      // Set x to 1 if x was initially zero
 }
 
 main() {
-    int foo;                    //no error because this is a variable and not a function
-    int y;
-    y = 8;
-    foo();
-    y = z + 10 + hello();       // Undefined function "hello" //Undefined variable "z"
+    int y;          // Declare an integer variable y
+    y = 8;          // Assign value 8 to y
+    foo();          // Call the function foo
+    y = z + 10;     // Modify y by adding 10 to it
 }

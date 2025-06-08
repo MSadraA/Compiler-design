@@ -1,69 +1,186 @@
 package main.visitor;
 
-import main.ast.nodes.Program;
-import main.ast.nodes.Stmt.*;
+import main.ast.nodes.*;
 import main.ast.nodes.declaration.*;
-import main.ast.nodes.expr.*;
-import main.ast.nodes.expr.primitives.BoolVal;
-import main.ast.nodes.expr.primitives.DoubleVal;
-import main.ast.nodes.expr.primitives.IntVal;
-import main.ast.nodes.expr.primitives.StringVal;
-
-/*GOALs:
- *   1. print out scope changes each time a new scope starts
- *   2. print the identifier if it is initialized
- *   3. print the identifier if it is used
- *   4. print out the name of the function when it is defined
- *   5. print out the name of the function when it is used
- *
- * */
+import main.ast.nodes.declarator.pointer.*;
+import main.ast.nodes.expression.*;
+import main.ast.nodes.declarator.*;
+import main.ast.nodes.specifier.*;
+import main.ast.nodes.statement.*;
+import main.ast.nodes.type.*;
+import main.ast.nodes.expression.initializer.*;
 
 public abstract class Visitor<T> implements IVisitor<T> {
-    @Override
+
     public T visit(Program program) {
         return null;
     }
-    public T visit(Main main) {
+    public T visit(Declaration declaration) {
         return null;
     }
-
     public T visit(FuncDec funcDec) {
         return null;
     }
-
-    public T visit(Assign assign) {
+    public T visit(ParamDec paramDec) {
         return null;
     }
     public T visit(VarDec varDec) {
         return null;
     }
-    public T visit(IfStmt ifStmt) {
+    public T visit(Declarator declarator) {
         return null;
     }
-    public T visit(FuncCallStmt funcCall) {
+    public T visit(ArrayDeclarator arrayDeclarator) {
         return null;
     }
-    public T visit(UnaryExpr unaryExpr) {
+    public T visit(FunctionDeclarator functionDeclarator) {
         return null;
     }
-    public T visit(BinaryExpr binaryExpr) {
+    public T visit(IdentifierDeclarator identifierDeclarator) {
         return null;
     }
-    public T visit(Identifier identifier) {
+    public T visit(InitDeclarator initDeclarator) {
         return null;
     }
-
-    public T visit(IntVal int_Val) {
+    public T visit(PointerDeclarator pointerDeclarator) {
         return null;
     }
-    public T visit(StringVal string_val){return null;}
-    public T visit(BoolVal bool_val){return null;}
-    public T visit(DoubleVal double_vals){return null;}
-    public T visit(FuncCallExpr func_call_expr){
+    public T visit(StarPointer starPointer) {
         return null;
     }
-    public T visit(Return the_return){
+    public T visit(Expression expression) {
         return null;
     }
-
+    public T visit(ArrayExpression arrayExpression) {
+        return null;
+    }
+    public T visit(BinaryExpression binaryExpression) {
+        return null;
+    }
+    public T visit(CastExpression castExpression) {
+        return null;
+    }
+    public T visit(CommaExpression commaExpression) {
+        return null;
+    }
+    public T visit(CompoundLiteralExpression compoundLiteralExpression) {
+        return null;
+    }
+    public T visit(ConditionalExpression conditionalExpression) {
+        return null;
+    }
+    public T visit(ConstExpression constExpression) {
+        return null;
+    }
+    public T visit(DigitSequenceExpression digitSequenceExpression) {
+        return null;
+    }
+    public T visit(FunctionCallExpression functionCallExpression) {
+        return null;
+    }
+    public T visit(IdExpression idExpression) {
+        return null;
+    }
+    public T visit(SizeofExpression sizeofExpression) {
+        return null;
+    }
+    public T visit(StringExpression stringExpression) {
+        return null;
+    }
+    public T visit(UnaryExpression unaryExpression) {
+        return null;
+    }
+    public T visit(Initializer initializer) {
+        return null;
+    }
+    public T visit(InitializerEntry initializerEntry) {
+        return null;
+    }
+    public T visit(FieldDesignator fieldDesignator) {
+        return null;
+    }
+    public T visit(ArrayDesignator arrayDesignator) {
+        return null;
+    }
+    public T visit(Designator designator) {
+        return null;
+    }
+    public T visit(Specifier specifier) {
+        return null;
+    }
+    public T visit(ConstSpecifier constSpecifier) {
+        return null;
+    }
+    public T visit(TypedefSpecifier typedefSpecifier) {
+        return null;
+    }
+    public T visit(Statement statement) {
+        return null;
+    }
+    public T visit(BreakStatement breakStatement) {
+        return null;
+    }
+    public T visit(CompoundStatement compoundStatement) {
+        return null;
+    }
+    public T visit(ContinueStatement continueStatement) {
+        return null;
+    }
+    public T visit(DoWhileStatement doWhileStatement) {
+        return null;
+    }
+    public T visit(ExpressionStatement expressionStatement) {
+        return null;
+    }
+    public T visit(ForCondStatement forCondStatement) {
+        return null;
+    }
+    public T visit(ForStatement forStatement) {
+        return null;
+    }
+    public T visit(IfStatement ifStatement) {
+        return null;
+    }
+    public T visit(ReturnStatement returnStatement) {
+        return null;
+    }
+    public T visit(WhileStatement whileStatement) {
+        return null;
+    }
+    public T visit(Type type) {
+        return null;
+    }
+    public T visit(BoolType boolType) {
+        return null;
+    }
+    public T visit(CharType charType) {
+        return null;
+    }
+    public T visit(DoubleType doubleType) {
+        return null;
+    }
+    public T visit(FloatType floatType) {
+        return null;
+    }
+    public T visit(IdType idType) {
+        return null;
+    }
+    public T visit(IntType intType) {
+        return null;
+    }
+    public T visit(LongType longType) {
+        return null;
+    }
+    public T visit(ShortType shortType) {
+        return null;
+    }
+    public T visit(SignedType signedType) {
+        return null;
+    }
+    public T visit(UnsignedType unsignedType) {
+        return null;
+    }
+    public T visit(VoidType voidType) {
+        return null;
+    }
 }

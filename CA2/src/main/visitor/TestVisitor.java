@@ -1,99 +1,463 @@
 package main.visitor;
 
-import main.ast.nodes.Program;
-import main.ast.nodes.Stmt.*;
-import main.ast.nodes.declaration.FuncDec;
-import main.ast.nodes.declaration.Main;
-import main.ast.nodes.expr.*;
-import main.ast.nodes.expr.primitives.BoolVal;
-import main.ast.nodes.expr.primitives.DoubleVal;
-import main.ast.nodes.expr.primitives.IntVal;
-import main.ast.nodes.expr.primitives.StringVal;
+import main.ast.nodes.*;
+import main.ast.nodes.declaration.*;
+import main.ast.nodes.declarator.pointer.*;
+import main.ast.nodes.expression.*;
+import main.ast.nodes.declarator.*;
+import main.ast.nodes.expression.operator.BinaryOperator;
+import main.ast.nodes.expression.operator.UnaryOperator;
+import main.ast.nodes.specifier.*;
+import main.ast.nodes.statement.*;
+import main.ast.nodes.type.*;
+import main.ast.nodes.expression.initializer.*;
 
 
-/*GOALs:
- *   1. print out scope changes each time a new scope starts
- *   2. print the identifier if it is initialized
- *   3. print the identifier if it is used
- *   4. print out the name of the function when it is defined
- *   5. print out the name of the function when it is used
- *
- * */
+import java.util.ArrayList;
+import java.util.List;
+
+public class TestVisitor extends Visitor<Integer> {
+
+    private String currentFuncName;
+    private boolean inFunctionDeclarator = false;
+    private List<String> logs = new ArrayList<>();
 
 
-public class TestVisitor extends Visitor<Void>{
     @Override
-    public Void visit(Program program) {
-        for (FuncDec func_dec : program.getFuncDecs()){
-            func_dec.accept(this);
+    public Integer visit(FuncDec funcDec){
+        this.currentFuncName = "";
+        CompoundStatement statement = funcDec.getStatement();
+        Declarator declarator = funcDec.getDeclarator();
+        int count = 0;
+
+        if (declarator != null){
+            inFunctionDeclarator = true;
+            declarator.accept(this);
         }
-        program.getMain().accept(this);
-        return null;
-    }
-    public Void visit(Main main) {
-        System.out.println("New Scope: Main");
-        for (Stmt stmt : main.getStmts()){
-            stmt.accept(this);
+        inFunctionDeclarator = false;
+
+        if(statement != null){
+            count = statement.accept(this);
+            logs.add("Line " + statement.getLine() + ": Stmt function " + currentFuncName + " = " + count);
         }
-        return null;
-    }
 
-    public Void visit(FuncDec funcDec) {
-        System.out.println("New Scope: " + funcDec.getFuncName());
-        for (Stmt stmt : funcDec.getStmts()){
-            stmt.accept(this);
+        for (int i = (logs.size() - 1) ; i >= 0 ; i--){
+            System.out.println(logs.get(i));
         }
-        return null;
+
+        logs.clear();
+        currentFuncName = "";
+        return 0;
     }
 
-    public Void visit(Assign assign) {
-        System.out.println("Used variable: " + assign.getLeftHand());
-        assign.getRightHand().accept(this);
-        return null;
-    }
-    public Void visit(VarDec varDec) {
-        System.out.println("Declared variable: " + varDec.getVarName());
-        return null;
-    }
-    public Void visit(IfStmt ifStmt) {
-        ifStmt.getCondition().accept(this);
-        ifStmt.getIfBody().accept(this);
-        ifStmt.getElseBody().accept(this);
-        return null;
-    }
-    public Void visit(FuncCallStmt funcCall) {
-        System.out.println("Called function: " + funcCall.getFunction().getName());
-        return null;
-    }
-    public Void visit(UnaryExpr unaryExpr) {
-        unaryExpr.getOperand().accept(this);
-        return null;
-    }
-    public Void visit(BinaryExpr binaryExpr) {
-        binaryExpr.getFirstOperand().accept(this);
-        binaryExpr.getSecondOperand().accept(this);
-        return null;
-    }
-    public Void visit(Identifier identifier) {
-        System.out.println("Used variable: " + identifier.getName());
-        return null;
+    @Override
+    public Integer visit(CompoundStatement compoundStatement){
+        int counter = 0;
+        List<BlockItem> items = compoundStatement.getSelfItems();
+        for (int i = items.size() - 1; i >= 0; i--) {
+            counter++;
+            items.get(i).accept(this);
+        }
+        return counter;
     }
 
-    public Void visit(IntVal int_Val) {
-        return null;
+    @Override
+    public Integer visit(Program program) {
+        List<Declaration> declarations = program.getDeclarations();
+        for(Declaration declaration : declarations){
+            declaration.accept(this);
+        }
+        return 0;
     }
-    public Void visit(StringVal string_val){return null;}
-    public Void visit(BoolVal bool_val){return null;}
-    public Void visit(DoubleVal double_vals){return null;}
 
-    public Void visit(FuncCallExpr func_call_expr){
-        System.out.println("Called function: " + func_call_expr.getName());
-        return null;
+    @Override
+    public Integer visit(Declaration declaration) {
+        return 0;
     }
-    public Void visit(Return the_return){
-        the_return.getReturn_value().accept(this);
-        return null;
+
+    @Override
+    public Integer visit(ParamDec paramDec) {
+        return 0;
     }
+
+    @Override
+    public Integer visit(VarDec varDec) {
+        List<InitDeclarator> initDeclarators = varDec.getInitDeclarators();
+        if(initDeclarators != null) {
+            for (int i = initDeclarators.size() - 1; i >= 0; i--) {
+                InitDeclarator initDeclarator = initDeclarators.get(i);
+                initDeclarator.accept(this);
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ArrayDeclarator arrayDeclarator) {
+        Declarator declarator = arrayDeclarator.getDeclarator();
+        if (declarator != null){
+            declarator.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(FunctionDeclarator functionDeclarator) {
+        Declarator declarator = functionDeclarator.getDeclarator();
+        if (declarator != null){
+            declarator.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(IdentifierDeclarator identifierDeclarator) {
+        String name = identifierDeclarator.getName();
+        if (name != null && inFunctionDeclarator){
+            currentFuncName = name;
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(InitDeclarator initDeclarator) {
+        Declarator declarator = initDeclarator.getDeclarator();
+        Initializer initializer = initDeclarator.getInitializer();
+        if(initializer != null){
+            initializer.accept(this);
+        }
+        if(declarator != null){
+            declarator.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(PointerDeclarator pointerDeclarator) {
+        Declarator declarator = pointerDeclarator.getDeclarator();
+        if(declarator != null){
+            declarator.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(StarPointer starPointer) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ArrayExpression arrayExpression) {
+        Expression assigned = arrayExpression.getAssigned();
+        Expression index = arrayExpression.getIndex();
+        if(assigned != null){
+            assigned.accept(this);
+            return 0;
+        }
+        if(index != null){
+            index.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(BinaryExpression binaryExpression) {
+        BinaryOperator operator = binaryExpression.getOperator();
+
+        logs.add("Line " + binaryExpression.getLine() + ": Expr " + operator.getSymbol());
+        return 0;
+    }
+
+    @Override
+    public Integer visit(CastExpression castExpression) {
+        Expression expression = castExpression.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(CommaExpression commaExpression) {
+        List<Expression> expressions = commaExpression.getExpressions();
+        logs.add("Line " + commaExpression.getLine() + ": Expr ,");
+        return 0;
+    }
+
+    @Override
+    public Integer visit(CompoundLiteralExpression compoundLiteralExpression) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ConditionalExpression conditionalExpression) {
+        Expression condition = conditionalExpression.getCondition();
+        Expression trueExpression = conditionalExpression.getTrueExpression();
+        Expression falseExpression = conditionalExpression.getFalseExpression();
+        if(condition != null){
+            condition.accept(this);
+            return 0;
+        }
+        if(trueExpression != null){
+            trueExpression.accept(this);
+            return 0;
+        }
+        if(falseExpression != null){
+            falseExpression.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ConstExpression constExpression) {
+        logs.add("Line " + constExpression.getLine() + ": Expr " + constExpression.getValue());
+        return 0;
+    }
+
+    @Override
+    public Integer visit(DigitSequenceExpression digitSequenceExpression) {
+        logs.add("Line " + digitSequenceExpression.getLine() + ": Expr " + digitSequenceExpression.getValue());
+        return 0;
+    }
+
+    @Override
+    public Integer visit(FunctionCallExpression functionCallExpression) {
+        Expression function = functionCallExpression.getFunction();
+        List<Expression> argument = functionCallExpression.getArguments();
+        if(function != null){
+            function.accept(this);
+            return 0;
+        }
+        if(argument != null){
+            argument.get(0).accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(IdExpression idExpression) {
+        String expressionVal = "Line " + idExpression.getLine() + ": Expr " + idExpression.getValue();
+        logs.add(expressionVal);
+        return 0;
+    }
+
+    @Override
+    public Integer visit(SizeofExpression sizeofExpression) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(StringExpression stringExpression) {
+        String value = String.join(" " , stringExpression.getValue());
+        String expressionVal = "Line " + stringExpression.getLine() + ": Expr " + value;
+        logs.add(expressionVal);
+
+        return 0;
+    }
+
+    @Override
+    public Integer visit(UnaryExpression unaryExpression) {
+        Expression expression = unaryExpression.getOperand();
+        UnaryOperator operator = unaryExpression.getOperator();
+        logs.add("Line " + unaryExpression.getLine() + ": Expr " + operator.getSymbol());
+        return 0;
+    }
+
+    @Override
+    public Integer visit(Initializer initializer) {
+        Expression expression = initializer.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
+        return 0;
+    }
+
+    @Override
+    public Integer visit(InitializerEntry initializerEntry) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(FieldDesignator fieldDesignator) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ArrayDesignator arrayDesignator) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(Designator designator) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(Specifier specifier) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ConstSpecifier constSpecifier) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(TypedefSpecifier typedefSpecifier) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(BreakStatement breakStatement) {
+        return 1;
+    }
+
+    @Override
+    public Integer visit(ContinueStatement continueStatement) {
+        return 1;
+    }
+
+    @Override
+    public Integer visit(DoWhileStatement doWhileStatement) {
+        Statement body = doWhileStatement.getBody();
+        if (body != null){
+            body.accept(this);
+        }
+        return 1;
+    }
+
+    @Override
+    public Integer visit(ExpressionStatement expressionStatement) {
+        Expression expression = expressionStatement.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
+        return 1;
+    }
+
+    @Override
+    public Integer visit(ForCondStatement forCondStatement) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ForStatement forStatement) {
+        Statement body = forStatement.getBody();
+        if (body != null){
+            int count = body.accept(this);
+            logs.add("Line " + forStatement.getLine() + ": Stmt for = " + (count));
+        }
+        return 1;
+    }
+
+    @Override
+    public Integer visit(IfStatement ifStatement) {
+        Expression condition = ifStatement.getCondition();
+        Statement thenStatement = ifStatement.getThenStatement();
+        Statement elseStatement = ifStatement.getElseStatement();
+
+        if(elseStatement != null){
+            int count = elseStatement.accept(this);
+            if (!(elseStatement instanceof IfStatement))
+                logs.add("Line " + elseStatement.getLine() + ": Stmt selection = " + count);
+        }
+
+        if(thenStatement != null){
+            int count = thenStatement.accept(this);
+            logs.add("Line " + thenStatement.getLine() + ": Stmt selection = " + count);
+        }
+
+        if(condition != null){
+            condition.accept(this);
+        }
+
+        return 1;
+    }
+
+
+    @Override
+    public Integer visit(ReturnStatement returnStatement) {
+        Expression expression = returnStatement.getExpression();
+        if(expression != null){
+            expression.accept(this);
+        }
+        return 1;
+    }
+
+    @Override
+    public Integer visit(WhileStatement whileStatement) {
+        Statement body = whileStatement.getBody();
+        Expression condition = whileStatement.getCondition();
+
+        if(body != null){
+            int count = body.accept(this);
+            logs.add("Line " + whileStatement.getLine() + ": Stmt while = " + count);
+        }
+
+        if (condition != null){
+            condition.accept(this);
+        }
+        return 1;
+    }
+
+    @Override
+    public Integer visit(Type type) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(BoolType boolType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(CharType charType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(DoubleType doubleType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(FloatType floatType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(IdType idType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(IntType intType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(LongType longType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(ShortType shortType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(SignedType signedType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(UnsignedType unsignedType) {
+        return 0;
+    }
+
+    @Override
+    public Integer visit(VoidType voidType) {
+        return 0;
+    }
+
 }
-
-

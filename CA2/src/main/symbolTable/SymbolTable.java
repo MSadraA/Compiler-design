@@ -3,6 +3,7 @@ package main.symbolTable;
 
 import main.symbolTable.exceptions.ItemAlreadyExistsException;
 import main.symbolTable.exceptions.ItemNotFoundException;
+import main.symbolTable.item.FunctionItem;
 import main.symbolTable.item.SymbolTableItem;
 
 import java.util.*;
@@ -56,6 +57,18 @@ public class SymbolTable {
             if( symbolTableItem != null )
                 return symbolTableItem;
             currentSymbolTable = currentSymbolTable.pre;
+        }
+        throw new ItemNotFoundException();
+    }
+
+    public FunctionItem findFunctionByName(String name , int argCount) throws ItemNotFoundException{
+        SymbolTable current = this;
+        while (current != null) {
+            for (SymbolTableItem item : current.items.values()) {
+                if (item instanceof FunctionItem && item.getName().equals(name) && ((FunctionItem) item).getParameters().size() == argCount)
+                    return (FunctionItem) item;
+            }
+            current = current.pre;
         }
         throw new ItemNotFoundException();
     }

@@ -5,9 +5,9 @@ void process():
             printf(a)
             printf(b)
             int b
-        
+
         printf(b)
-end    
+end
 
 int main():
     int b
