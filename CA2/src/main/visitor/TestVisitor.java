@@ -180,7 +180,7 @@ public class TestVisitor extends Visitor<Integer> {
     @Override
     public Integer visit(CommaExpression commaExpression) {
         List<Expression> expressions = commaExpression.getExpressions();
-        logs.add("Line :" + commaExpression.getLine() + ": Expr ,");
+        logs.add("Line " + commaExpression.getLine() + ": Expr ,");
         return 0;
     }
 
@@ -229,7 +229,7 @@ public class TestVisitor extends Visitor<Integer> {
             return 0;
         }
         if(argument != null){
-            argument.getFirst().accept(this);
+            argument.get(0).accept(this);
         }
         return 0;
     }
@@ -391,7 +391,7 @@ public class TestVisitor extends Visitor<Integer> {
 
         if(body != null){
             int count = body.accept(this);
-            logs.add("Line " + whileStatement.getLine() + ": Stmt While = " + count);
+            logs.add("Line " + whileStatement.getLine() + ": Stmt while = " + count);
         }
 
         if (condition != null){

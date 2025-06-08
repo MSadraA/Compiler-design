@@ -2,6 +2,7 @@ package main.ast.nodes.statement;
 
 import main.ast.nodes.declaration.Declaration;
 import main.ast.nodes.declaration.VarDec;
+import main.symbolTable.SymbolTable;
 import main.visitor.IVisitor;
 
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ public class CompoundStatement extends Statement {
     private List<Statement> self_statements = new ArrayList<>();
     private List<Declaration> self_decleration = new ArrayList<>();
     private List<BlockItem> self_items = new ArrayList<>();
+
+    private SymbolTable symbol_table;
+    public void set_symbol_table(SymbolTable symbol_table) {this.symbol_table = symbol_table;}
 
     public CompoundStatement() {
     }

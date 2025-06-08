@@ -12,6 +12,9 @@ public class DoWhileStatement extends Statement{
     public Statement getBody() {
         return body;
     }
+    public Expression getCondition() {
+        return condition;
+    }
 
     public DoWhileStatement(Expression condition, Statement body) {
         this.condition = condition;

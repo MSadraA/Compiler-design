@@ -5,6 +5,10 @@ import main.visitor.IVisitor;
 public class IdType extends Type {
     private String name;
 
+    public String getName() {
+        return name;
+    }
+
     public IdType(String name){
         this.name = name;
     }

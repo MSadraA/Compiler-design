@@ -12,6 +12,19 @@ public class ForCondStatement extends Statement{
     private List<Expression> conditions;
     private List<Expression> updateExpressions;
 
+    public VarDec getInitDeclaration() {
+        return initDeclaration;
+    }
+    public Expression getInitExpression() {
+        return initExpression;
+    }
+    public List<Expression> getConditions() {
+        return conditions;
+    }
+    public List<Expression> getUpdateExpressions() {
+        return updateExpressions;
+    }
+
     public void setInitDeclaration(VarDec initDeclaration) {
         this.initDeclaration = initDeclaration;
     }

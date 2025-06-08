@@ -14,6 +14,10 @@ public class FunctionDeclarator extends Declarator{
     public FunctionDeclarator() {
     }
 
+    public List<ParamDec> getParameters() {
+        return parameters;
+    }
+
     public Declarator getDeclarator() {
         return declarator;
     }

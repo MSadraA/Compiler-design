@@ -20,7 +20,6 @@ import java.util.List;
 public class CpyVisitor extends Visitor<Void> {
     private Deque<Node> nodeStack = new ArrayDeque<>();
     private Deque<Node> callStack = new ArrayDeque<>();
-    private Deque<Boolean> ifChainStack = new ArrayDeque<>();
 
     private int currentIndentLevel = 0;
     private boolean not_in_chain = true;

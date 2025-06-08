@@ -10,6 +10,15 @@ public class InitializerEntry extends Node {
     private List<Designator> designators = new ArrayList<>();
     private Initializer initializer;
 
+    public List<Designator> getDisignators() {
+        return designators;
+    }
+
+    public Initializer getInitializer() {
+        return initializer;
+    }
+
+
     public void setDesignators(List<Designator> designators) {
         this.designators = designators;
     }

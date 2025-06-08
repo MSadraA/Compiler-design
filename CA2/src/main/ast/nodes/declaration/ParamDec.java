@@ -11,6 +11,14 @@ public class ParamDec extends Declaration {
     private List<Specifier> specifiers = new ArrayList<>();
     private Declarator declarator;
 
+    public List<Specifier> getSpecifiers() {
+        return specifiers;
+    }
+
+    public Declarator getDeclarator() {
+        return declarator;
+    }
+
     public void setDeclarator(Declarator declarator) {
         this.declarator = declarator;
     }

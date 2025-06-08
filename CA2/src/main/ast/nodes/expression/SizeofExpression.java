@@ -6,6 +6,10 @@ import main.visitor.IVisitor;
 public class SizeofExpression extends Expression {
     private ParamDec typeName;
 
+    public ParamDec getTypeName() {
+        return typeName;
+    }
+
     public SizeofExpression(ParamDec typeName) {
         this.typeName = typeName;
     }

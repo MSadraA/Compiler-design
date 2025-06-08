@@ -6,6 +6,10 @@ import main.visitor.IVisitor;
 public class ArrayDesignator extends Designator {
     private Expression index;
 
+    public Expression getIndex() {
+        return index;
+    }
+
     public ArrayDesignator(){}
 
     public ArrayDesignator(Expression expression , int line){

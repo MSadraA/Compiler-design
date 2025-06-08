@@ -12,6 +12,10 @@ public class CompoundLiteralExpression extends Expression {
     private ParamDec type;
     private List<InitializerEntry> initializers = new ArrayList<>();
 
+    public ParamDec getType(){
+        return type;
+    }
+
     public List<InitializerEntry> getInitializers(){
         return initializers;
     }

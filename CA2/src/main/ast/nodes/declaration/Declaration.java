@@ -1,4 +1,5 @@
 package main.ast.nodes.declaration;
+
 import main.ast.nodes.Node;
 
 import main.ast.nodes.statement.BlockItem;

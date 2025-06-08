@@ -9,6 +9,9 @@ public class ForStatement extends Statement{
     public Statement getBody() {
         return body;
     }
+    public ForCondStatement getCondition() {
+        return condition;
+    }
 
     @Override
     public void setBody(Statement body) {

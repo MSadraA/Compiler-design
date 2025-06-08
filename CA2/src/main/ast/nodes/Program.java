@@ -1,6 +1,7 @@
 package main.ast.nodes;
 
 import main.ast.nodes.declaration.Declaration;
+import main.symbolTable.SymbolTable;
 import main.visitor.IVisitor;
 
 import java.util.ArrayList;
@@ -8,7 +9,13 @@ import java.util.List;
 
 public class Program extends Node {
     private List<Declaration> declarations = new ArrayList<>();
+    private SymbolTable symbol_table;
+
     public Program() {
+    }
+
+    public void setSymbolTable(SymbolTable symbol_table) {
+        this.symbol_table = symbol_table;
     }
 
     public void getDeclarations(List<Declaration> declarations) {

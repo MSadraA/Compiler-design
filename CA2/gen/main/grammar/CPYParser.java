@@ -1,4 +1,4 @@
-// Generated from /home/sadra/Documents/Codes/Compiler-design/CA1/src/main/grammar/CPY.g4 by ANTLR 4.13.2
+// Generated from /home/sadra/Documents/Codes/Compiler-design/phase-1-ce-MSadraA/src/main/grammar/CPY.g4 by ANTLR 4.13.2
 package main.grammar;
 
     import java.util.ArrayList;
@@ -3065,6 +3065,8 @@ public class CPYParser extends Parser {
 
 			        ((ParameterDeclarationContext)_localctx).parameterRet =  new ParamDec();
 			        _localctx.parameterRet.setSpecifiers(((ParameterDeclarationContext)_localctx).a.specifiersRet);
+			        if(((ParameterDeclarationContext)_localctx).a.specifiersRet.size() > 0)
+			            _localctx.parameterRet.setLine(((ParameterDeclarationContext)_localctx).a.specifiersRet.getFirst().getLine());
 			      
 			setState(589);
 			_errHandler.sync(this);
@@ -3076,7 +3078,6 @@ public class CPYParser extends Parser {
 				((ParameterDeclarationContext)_localctx).b = declarator();
 
 				        _localctx.parameterRet.setDeclarator(((ParameterDeclarationContext)_localctx).b.declaratorRet);
-				        _localctx.parameterRet.setLine(((ParameterDeclarationContext)_localctx).b.declaratorRet.getLine());
 				      
 				}
 				}

@@ -3,6 +3,7 @@ package main.ast.nodes.declaration;
 import main.ast.nodes.specifier.Specifier;
 import main.ast.nodes.declarator.Declarator;
 import main.ast.nodes.statement.CompoundStatement;
+import main.symbolTable.SymbolTable;
 import main.visitor.IVisitor;
 
 
@@ -15,6 +16,11 @@ public class FuncDec extends Declaration {
     private Declarator declarator;
     private List<VarDec> varDecs = new ArrayList<>();
     private CompoundStatement statement;
+
+    private SymbolTable symbol_table;
+
+    public void set_symbol_table(SymbolTable symbol_table) {this.symbol_table = symbol_table;}
+
 
     public List<Specifier> getSpecifiers() {
         return specifiers;
