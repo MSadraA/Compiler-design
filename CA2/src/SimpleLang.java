@@ -1,6 +1,7 @@
 import main.ast.nodes.Program;
 import main.grammar.CPYLexer;
 import main.grammar.CPYParser;
+import main.symbolTable.SymbolTable;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -14,6 +15,7 @@ public class SimpleLang {
         CommonTokenStream tokens = new CommonTokenStream(simpleLangLexer);
         CPYParser flParser = new CPYParser(tokens);
         Program program = flParser.program().programRet;
+
 
         CpyVisitor cpyVisitor = new CpyVisitor();
         cpyVisitor.visit(program);

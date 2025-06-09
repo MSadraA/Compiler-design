@@ -20,12 +20,15 @@ import java.util.List;
 public class CpyVisitor extends Visitor<Void> {
     private Deque<Node> nodeStack = new ArrayDeque<>();
     private Deque<Node> callStack = new ArrayDeque<>();
+    private Program rootProgram = null;
+
 
     private int currentIndentLevel = 0;
     private boolean not_in_chain = true;
 
     @Override
     public Void visit(Program program) {
+        rootProgram = program;
         callStack.push(program);
         for (Declaration declaration : program.getDeclarations()) {
             currentIndentLevel = 0;
@@ -318,19 +321,24 @@ public class CpyVisitor extends Visitor<Void> {
 
     private void attachToParentByIndentLevel(BlockItem item, int indentLevel) {
         Deque<Node> tempStack = new ArrayDeque<>(nodeStack);
-        int tempIndent = 0;
+        int tempIndent;
 
         while (!tempStack.isEmpty()) {
             CompoundStatement parent = (CompoundStatement) tempStack.pop();
             tempIndent = parent.getIndentLevel();
             if (tempIndent == indentLevel) {
-                if(item instanceof Statement)
+                if (item instanceof Statement)
                     parent.addSelfStatement((Statement) item);
                 else
                     parent.addSelfVarDec((VarDec) item);
                 return;
             }
         }
+
+        if (indentLevel == 0 && rootProgram != null) {
+            return;
+        }
+
         throw new RuntimeException("RUN TIME ERROR - parent not found");
     }
 

@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompoundStatement extends Statement {
-    private List<Statement> statements = new ArrayList<>();
-    private List<Declaration> declarations = new ArrayList<>();
-    private List<BlockItem> items = new ArrayList<>();
+    private final List<Statement> statements = new ArrayList<>();
+    private final List<Declaration> declarations = new ArrayList<>();
+    private final List<BlockItem> items = new ArrayList<>();
 
-    private List<Statement> self_statements = new ArrayList<>();
-    private List<Declaration> self_decleration = new ArrayList<>();
-    private List<BlockItem> self_items = new ArrayList<>();
+    private final List<Statement> self_statements = new ArrayList<>();
+    private final List<Declaration> self_decleration = new ArrayList<>();
+    private final List<BlockItem> self_items = new ArrayList<>();
 
     private SymbolTable symbol_table;
     public void set_symbol_table(SymbolTable symbol_table) {this.symbol_table = symbol_table;}
