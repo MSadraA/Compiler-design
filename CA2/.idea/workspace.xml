@@ -7,23 +7,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="03ae34a9-2000-4ae7-80e6-f78dfa855550" name="Changes" comment="handle include and typedef in cpy visitor">
-      <change afterPath="$PROJECT_DIR$/src/main/optimizer/Optimizer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/optimizer/UnusedVarVisitor.java" afterDir="false" />
+    <list default="true" id="03ae34a9-2000-4ae7-80e6-f78dfa855550" name="Changes" comment="unused variable optimizer">
+      <change afterPath="$PROJECT_DIR$/src/main/optimizer/NoSideEffects.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/symbolTable/item/ConstItem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/symbolTable/item/TypedefItem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/Program.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/Program.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/FuncDec.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/FuncDec.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/SymbolTableItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/SymbolTableItem.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/VarDec.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/VarDec.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/optimizer/Optimizer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/optimizer/Optimizer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/utils/DeclaratorUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/utils/DeclaratorUtils.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimpleLang.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimpleLang.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/Program.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/Program.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/declaration/FuncDec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/declaration/FuncDec.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/expression/FunctionCallExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/expression/FunctionCallExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/statement/CompoundStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/statement/CompoundStatement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/FunctionItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/FunctionItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/SymbolTableItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/SymbolTableItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/VariableItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/VariableItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/visitor/CpyVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/CpyVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/declaration/VarDec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/declaration/VarDec.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/optimizer/Optimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/optimizer/Optimizer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/SymbolTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/SymbolTable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/utils/DeclaratorUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/utils/DeclaratorUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/NameAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/NameAnalyzer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test.sl" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.sl" afterDir="false" />
     </list>
@@ -132,13 +128,30 @@
       <option name="project" value="LOCAL" />
       <updated>1749494725173</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="unused variable optimizer">
+      <option name="closed" value="true" />
+      <created>1749600828603</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1749600828603</updated>
+    </task>
+    <task id="LOCAL-00006" summary="unused variable optimizer">
+      <option name="closed" value="true" />
+      <created>1749600838733</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1749600838733</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="name analyzer and symbol table" />
     <MESSAGE value="handle include and typedef in cpy visitor" />
-    <option name="LAST_COMMIT_MESSAGE" value="handle include and typedef in cpy visitor" />
+    <MESSAGE value="unused variable optimizer" />
+    <option name="LAST_COMMIT_MESSAGE" value="unused variable optimizer" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -148,7 +161,18 @@
           <line>29</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/SimpleLang.java</url>
+          <line>26</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="((java.util.ArrayList)((CompoundStatement)((FuncDec)program.declarations.get(0)).statement).self_items).get(4)" custom="main.ast.nodes.declaration.FuncDec,main.ast.nodes.statement.CompoundStatement,java.util.ArrayList" />
+        <watch expression="((HashMap)program.symbol_table.items).entrySet().toArray()[0]" custom="java.util.HashMap" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

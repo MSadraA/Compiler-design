@@ -1,13 +1,17 @@
-int f(int a , int b):
-    return a
-end
+typedef int a
+typedef a b
+typedef a char b c
 
-int g(int a , int b):
-    f(a , b)
-end
+const int x = 2
 
-int main():
+int b(int x , int y):
+    a a
     int x
-    int y
-    g(f(x,y),y)
+    if(3>2):
+        c h
+        int x
+        x = 2
+    else:
+        int x
+        x = 3
 end

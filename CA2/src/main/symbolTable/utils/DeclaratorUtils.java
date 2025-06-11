@@ -5,7 +5,10 @@ import main.ast.nodes.declarator.*;
 import main.ast.nodes.specifier.ConstSpecifier;
 import main.ast.nodes.specifier.Specifier;
 import main.ast.nodes.type.*;
+import main.symbolTable.SymbolTable;
+import main.symbolTable.exceptions.ItemNotFoundException;
 import main.symbolTable.item.SymbolTableItem;
+import main.symbolTable.item.TypedefItem;
 import main.symbolTable.item.VariableItem;
 
 import java.util.ArrayList;
@@ -38,11 +41,13 @@ public class DeclaratorUtils {
                 List<Specifier> specs = param.getSpecifiers();
 
                 String name = DeclaratorUtils.extractVarName(specs);
+                int size = specs.size();
+                List<Type> types = (size > 0) ? extractTypes(specs.subList(0, size - 1)) : null;
                 if (name == null && innerDecl != null)
                     name = DeclaratorUtils.extractName(innerDecl);
 
                 if (name != null) {
-                    SymbolTableItem item = new VariableItem(name, extractTypes(specs));
+                    SymbolTableItem item = new VariableItem(name, types);
                     params.add(item);
                 }
             }
@@ -67,17 +72,19 @@ public class DeclaratorUtils {
         if (specifiers == null || specifiers.isEmpty())
             return types;
 
-        for (int i = 0; i < specifiers.size() - 1; i++) {
-            Specifier spec = specifiers.get(i);
-            if (spec instanceof Type type)
+        for (Specifier spec : specifiers) {
+            if (spec instanceof IdType idType) {
+                String alias = idType.getName();
+                try {
+                    TypedefItem typedefItem = (TypedefItem) SymbolTable.top.getItem(alias);
+                    types.addAll(typedefItem.getTypes());
+                } catch (ItemNotFoundException e) {
+                    System.out.println("Line: " + spec.getLine() + " Typedef not found for alias: " + alias);
+                }
+            } else if (spec instanceof Type type) {
                 types.add(type);
+            }
         }
-
-        Specifier last = specifiers.getLast();
-        if (last instanceof Type type && !(last instanceof IdType)) {
-            types.add(type);
-        }
-
         return types;
     }
 

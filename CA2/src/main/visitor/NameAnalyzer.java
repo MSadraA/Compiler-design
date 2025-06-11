@@ -12,9 +12,7 @@ import main.ast.nodes.expression.initializer.*;
 import main.symbolTable.SymbolTable;
 import main.symbolTable.exceptions.ItemAlreadyExistsException;
 import main.symbolTable.exceptions.ItemNotFoundException;
-import main.symbolTable.item.FunctionItem;
-import main.symbolTable.item.SymbolTableItem;
-import main.symbolTable.item.VariableItem;
+import main.symbolTable.item.*;
 import main.symbolTable.utils.DeclaratorUtils;
 
 import java.util.ArrayDeque;
@@ -23,6 +21,8 @@ import java.util.Deque;
 import java.util.List;
 
 public class NameAnalyzer extends Visitor<Void> {
+    private SymbolTable currFunctionScope = null;
+
     private boolean isInFunctionCallContext = false;
     private int argCount = 0;
     private List<Boolean> usedArgs;
@@ -76,18 +76,18 @@ public class NameAnalyzer extends Visitor<Void> {
     public Void visit(FuncDec funcDec) {
         Declarator declarator = funcDec.getDeclarator();
         String funcName = DeclaratorUtils.extractName(declarator);
+        List<Type> types = DeclaratorUtils.extractTypes(funcDec.getSpecifiers());
         List<SymbolTableItem> params = DeclaratorUtils.extractFunctionParamItems(declarator);
         FunctionItem functionItem = null;
-
         try {
-            functionItem = new FunctionItem(funcName , DeclaratorUtils.extractTypes(funcDec.getSpecifiers()),params);
+            functionItem = new FunctionItem(funcName , types ,params);
             SymbolTable.top.put(functionItem);
         } catch (ItemAlreadyExistsException e) {
             System.out.println("Line:" + funcDec.getLine() + "-> function " + funcName + " already declared");
         }
-
         SymbolTable funcScope = new SymbolTable(SymbolTable.top);
         SymbolTable.push(funcScope);
+        currFunctionScope = funcScope;
         funcDec.set_symbol_table(funcScope);
 
         if (declarator != null)
@@ -98,16 +98,27 @@ public class NameAnalyzer extends Visitor<Void> {
             functionItem.addParameter(item);
         }
 
-        if (funcDec.getStatement() != null)
+        if (funcDec.getStatement() != null) {
             funcDec.getStatement().accept(this);
+        }
 
+        currFunctionScope = null;
         SymbolTable.pop();
         return null;
     }
 
     @Override
     public Void visit(CompoundStatement compoundStatement) {
-        SymbolTable newScope = new SymbolTable(SymbolTable.top);
+
+        SymbolTable newScope;
+        if(currFunctionScope == null){
+            newScope = new SymbolTable(SymbolTable.top);
+        }
+        else{
+            newScope = currFunctionScope;
+            currFunctionScope = null;
+        }
+
         SymbolTable.push(newScope);
         compoundStatement.set_symbol_table(newScope);
         for (BlockItem item : compoundStatement.getSelfItems()) {
@@ -201,10 +212,49 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(VarDec varDec) {
+        if(varDec.getSpecifiers().getFirst() instanceof ConstSpecifier){
+            if(varDec.getInitDeclarators() == null)
+                return null;
+
+            List<Type> baseTypes = DeclaratorUtils.extractTypes(
+                    varDec.getSpecifiers().subList(1, varDec.getSpecifiers().size())
+            );
+            InitDeclarator declarator = varDec.getInitDeclarators().getFirst();
+            Initializer initializer = declarator.getInitializer();
+            String name = DeclaratorUtils.extractName(declarator.getDeclarator());
+            if(name != null && initializer != null){
+                try{
+                    SymbolTable.top.put(new ConstItem(name , baseTypes, initializer.getExpression()));
+                } catch (ItemAlreadyExistsException e) {
+                    System.out.println( "Line:" + varDec.getLine() + "-> " + name + " already declared as const");
+                }
+            }
+            return null;
+        }
+
+        if (varDec.getSpecifiers().getFirst() instanceof TypedefSpecifier) {
+            List<Type> baseTypes = DeclaratorUtils.extractTypes(
+                    varDec.getSpecifiers().subList(1, varDec.getSpecifiers().size() - 1)
+            );
+
+            String typedefName = DeclaratorUtils.extractVarName(varDec.getSpecifiers());
+            varDec.setTypes(baseTypes);
+
+            if (typedefName != null) {
+                try {
+                    SymbolTable.top.put(new TypedefItem(typedefName, baseTypes));
+                } catch (ItemAlreadyExistsException e) {
+                    System.out.println("Line:" + varDec.getLine() + "-> " + typedefName + " already declared as typedef");
+                }
+            }
+            return null;
+        }
+
         List<InitDeclarator> declarators = varDec.getInitDeclarators();
-        List<Type> types = DeclaratorUtils.extractTypes(varDec.getSpecifiers());
 
         if (declarators != null && !declarators.isEmpty()) {
+            List<Type> types = DeclaratorUtils.extractTypes(varDec.getSpecifiers());
+            varDec.setTypes(types);
             for (InitDeclarator init : declarators) {
                 Declarator declarator = init.getDeclarator();
                 String name = DeclaratorUtils.extractName(declarator);
@@ -217,6 +267,9 @@ public class NameAnalyzer extends Visitor<Void> {
             }
         } else {
             String s_name = DeclaratorUtils.extractVarName(varDec.getSpecifiers());
+            int size = varDec.getSpecifiers().size();
+            List<Type> types = (size > 0)? DeclaratorUtils.extractTypes(varDec.getSpecifiers().subList(0, size - 1)): null;
+            varDec.setTypes(types);
             if (s_name != null) {
                 try {
                     SymbolTable.top.put(new VariableItem(s_name, types , varDec));
@@ -233,7 +286,8 @@ public class NameAnalyzer extends Visitor<Void> {
     @Override
     public Void visit(ParamDec paramDec) {
         List<Specifier> specs = paramDec.getSpecifiers();
-        List<Type> types = DeclaratorUtils.extractTypes(specs);
+        int size = specs.size();
+        List<Type> types = (size > 0) ? DeclaratorUtils.extractTypes(specs.subList(0, specs.size() - 1)): null;
 
         String name = null;
 
@@ -443,14 +497,11 @@ public class NameAnalyzer extends Visitor<Void> {
     public Void visit(IdExpression idExpression) {
         String name = idExpression.getValue();
         if (isInFunctionCallContext) {
-
             if (name == null || isBuiltIn(name)) {
-                if (isBuiltIn(name)) {
+                if (isBuiltIn(name))
                     usedArgs = List.of(true, true);
-                }
                 return null;
             }
-
             try {
                 FunctionItem item =  SymbolTable.top.findFunctionByName(name , argCount);
                 argCount = 0; // Reset argCount after visiting a function call
@@ -566,7 +617,9 @@ public class NameAnalyzer extends Visitor<Void> {
     public Void visit(ConstSpecifier constSpecifier) { return null; }
 
     @Override
-    public Void visit(TypedefSpecifier typedefSpecifier) { return null; }
+    public Void visit(TypedefSpecifier typedefSpecifier) {
+        return null;
+    }
 
     @Override
     public Void visit(ExpressionStatement expressionStatement) {

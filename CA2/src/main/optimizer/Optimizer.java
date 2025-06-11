@@ -7,7 +7,7 @@ import java.util.List;
 public class Optimizer {
     public void optimize(Program program) {
         new UnusedVarVisitor().visit(program);
-//        new UnusedParamVisitor().visit(program);
+        new NoSideEffects().visit(program);
 //        new DeadCodeAfterReturnVisitor().visit(program);
 //        new SideEffectFreeVisitor().visit(program);
 //        new MultipleAssignmentVisitor().visit(program);

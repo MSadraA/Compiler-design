@@ -5,6 +5,8 @@ import main.symbolTable.exceptions.ItemAlreadyExistsException;
 import main.symbolTable.exceptions.ItemNotFoundException;
 import main.symbolTable.item.FunctionItem;
 import main.symbolTable.item.SymbolTableItem;
+import main.symbolTable.item.TypedefItem;
+import main.symbolTable.item.VariableItem;
 
 import java.util.*;
 
@@ -43,8 +45,12 @@ public class SymbolTable {
         return stack;
     }
 
+    boolean isNamedItem(SymbolTableItem item) {
+        return item instanceof VariableItem || item instanceof TypedefItem;
+    }
+
     public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
-        if (items.containsKey(item.getKey()))
+        if (items.containsKey(item.getKey()) || findTypedefByName(item.getKey()) != null)
             throw new ItemAlreadyExistsException();
         items.put(item.getKey(), item);
     }
@@ -71,6 +77,18 @@ public class SymbolTable {
             current = current.pre;
         }
         throw new ItemNotFoundException();
+    }
+
+    public TypedefItem findTypedefByName(String name) {
+        SymbolTable current = this;
+        while (current != null) {
+            for (SymbolTableItem item : current.items.values()) {
+                if (item instanceof TypedefItem && item.getName().equals(name))
+                    return (TypedefItem) item;
+            }
+            current = current.pre;
+        }
+        return null;
     }
 
     public int getItemsSize() {

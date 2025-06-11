@@ -2,6 +2,7 @@ package main.ast.nodes.declaration;
 
 import main.ast.nodes.declarator.InitDeclarator;
 import main.ast.nodes.specifier.Specifier;
+import main.ast.nodes.type.Type;
 import main.visitor.IVisitor;
 
 import java.util.List;
@@ -9,6 +10,15 @@ import java.util.List;
 public class VarDec extends Declaration{
     private List<Specifier> specifiers;
     private List<InitDeclarator> initDeclarators;
+    private List<Type> types;
+
+    public List<Type> getTypes() {
+        return types;
+    }
+
+    public void setTypes(List<Type> types) {
+        this.types = types;
+    }
 
     public List<Specifier> getSpecifiers(){
         return specifiers;
