@@ -1,10 +1,12 @@
-package main.visitor;
+package main.optimizer;
 
 import main.ast.nodes.*;
 import main.ast.nodes.declaration.*;
 import main.ast.nodes.declarator.pointer.*;
 import main.ast.nodes.expression.*;
 import main.ast.nodes.declarator.*;
+import main.ast.nodes.expression.operator.BinaryOperator;
+import main.ast.nodes.expression.operator.UnaryOperator;
 import main.ast.nodes.specifier.*;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.type.*;
@@ -16,105 +18,103 @@ import main.symbolTable.item.FunctionItem;
 import main.symbolTable.item.SymbolTableItem;
 import main.symbolTable.item.VariableItem;
 import main.symbolTable.utils.DeclaratorUtils;
+import main.visitor.Visitor;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-public class NameAnalyzer extends Visitor<Void> {
-    private boolean isInFunctionCallContext = false;
-    private int argCount = 0;
-    private List<Boolean> usedArgs;
+import static main.symbolTable.utils.DeclaratorUtils.extractName;
 
-    private static class FuncCallContext {
-        private boolean isFuncCallArg = false;
-        private final Deque<Expression> funcCallStack = new ArrayDeque<>();
-        List<Boolean> usedArgs;
-        List<Expression> argsExpression = new ArrayList<>();
-        int currArg = 0;
-
-        FuncCallContext(List<Boolean> usedArgs) {
-            this.usedArgs = usedArgs;
-        }
-    }
-    private FuncCallContext currentContext() {
-        return funcCallContextStack.isEmpty() ? null : funcCallContextStack.peek();
-    }
-    private final Deque<FuncCallContext> funcCallContextStack = new ArrayDeque<>();
-
-
-    // handle function sig for funcCalls
-//    private boolean isFuncCallArg = false;
-//    private List<Boolean> usedArgs = null;
-//    private List<Expression> argsExpression = new ArrayList<>();
-//    private final Deque<Expression> funcCallStack = new ArrayDeque<>();
-//    private int currArg = 0;
-
-    private static final List<String> BUILT_INS = List.of("printf", "scanf");
-
-    private boolean isBuiltIn(String name) {
-        return name != null && BUILT_INS.contains(name.trim());
-    }
-
+public class UnusedVarVisitor extends Visitor<Void> {
+    private SymbolTable functionArg = null;
+    private boolean isInFunction = false;
 
     @Override
     public Void visit(Program program) {
-        SymbolTable.root = new SymbolTable(null);
-        SymbolTable.push(SymbolTable.root);
+        List<Declaration> org_declarations = program.getDeclarations();
+        List<Declaration> new_declarations = new ArrayList<>();
+        SymbolTable scope = program.getSymbolTable();
 
-        program.setSymbolTable(SymbolTable.top);
+        for(Declaration declaration : org_declarations){
+            if ((declaration instanceof FuncDec)) {
+                new_declarations.add(declaration);
+                continue;
+            }
+
+            for (SymbolTableItem item : scope.items.values()) {
+                if (item instanceof VariableItem variableItem) {
+                    if (variableItem.getDeclaration() == declaration && variableItem.getUsed()) {
+                        new_declarations.add(declaration);
+                        break;
+                    }
+                }
+            }
+        }
+
+        program.setDeclarations(new_declarations);
 
         for (Declaration declaration : program.getDeclarations()) {
             declaration.accept(this);
         }
-
         return null;
     }
 
     @Override
     public Void visit(FuncDec funcDec) {
         Declarator declarator = funcDec.getDeclarator();
-        String funcName = DeclaratorUtils.extractName(declarator);
-        List<SymbolTableItem> params = DeclaratorUtils.extractFunctionParamItems(declarator);
-        FunctionItem functionItem = null;
+        functionArg = funcDec.getSymbolTable();
 
-        try {
-            functionItem = new FunctionItem(funcName , DeclaratorUtils.extractTypes(funcDec.getSpecifiers()),params);
-            SymbolTable.top.put(functionItem);
-        } catch (ItemAlreadyExistsException e) {
-            System.out.println("Line:" + funcDec.getLine() + "-> function " + funcName + " already declared");
-        }
-
-        SymbolTable funcScope = new SymbolTable(SymbolTable.top);
-        SymbolTable.push(funcScope);
-        funcDec.set_symbol_table(funcScope);
-
-        if (declarator != null)
+        // Optimize function args
+        if ((declarator != null ) && functionArg != null ){
+            isInFunction = true;
             declarator.accept(this);
-
-        functionItem.clearParameters();
-        for (SymbolTableItem item : funcScope.items.values()){
-            functionItem.addParameter(item);
+            isInFunction = false;
         }
+        functionArg = null;
 
+        // Optimize body
         if (funcDec.getStatement() != null)
             funcDec.getStatement().accept(this);
 
-        SymbolTable.pop();
         return null;
     }
 
     @Override
     public Void visit(CompoundStatement compoundStatement) {
-        SymbolTable newScope = new SymbolTable(SymbolTable.top);
-        SymbolTable.push(newScope);
-        compoundStatement.set_symbol_table(newScope);
-        for (BlockItem item : compoundStatement.getSelfItems()) {
+        SymbolTable scope = compoundStatement.getSymbolTable();
+        List<BlockItem> org_items = new ArrayList<>(compoundStatement.getSelfItems());
+
+        List<BlockItem> new_items = new ArrayList<>();
+        List<Declaration> new_declarations = new ArrayList<>();
+        List<Statement> new_statements = new ArrayList<>();
+
+        for (BlockItem item : org_items) {
+            if (item instanceof Statement statement) {
+                new_statements.add(statement);
+                new_items.add(item);
+            } else if (item instanceof Declaration declaration) {
+                for (SymbolTableItem s_item : scope.items.values()) {
+                    if (s_item instanceof FunctionItem) continue;
+                    if (s_item instanceof VariableItem variableItem && variableItem.getUsed()
+                            && variableItem.getDeclaration() == declaration) {
+                        new_declarations.add(declaration);
+                        new_items.add(item);
+                        break;
+                    }
+                }
+            }
+        }
+
+        compoundStatement.setStatements(new_statements);
+        compoundStatement.setDeclarations(new_declarations);
+        compoundStatement.setItems(new_items);
+
+        for (BlockItem item : new_items) {
             item.accept(this);
         }
 
-        SymbolTable.pop();
         return null;
     }
 
@@ -201,58 +201,12 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(VarDec varDec) {
-        List<InitDeclarator> declarators = varDec.getInitDeclarators();
-        List<Type> types = DeclaratorUtils.extractTypes(varDec.getSpecifiers());
-
-        if (declarators != null && !declarators.isEmpty()) {
-            for (InitDeclarator init : declarators) {
-                Declarator declarator = init.getDeclarator();
-                String name = DeclaratorUtils.extractName(declarator);
-
-                try {
-                    SymbolTable.top.put(new VariableItem(name, types , varDec));
-                } catch (ItemAlreadyExistsException e) {
-                    System.out.println("Line:" + varDec.getLine() + "-> " + name + " already declared");
-                }
-            }
-        } else {
-            String s_name = DeclaratorUtils.extractVarName(varDec.getSpecifiers());
-            if (s_name != null) {
-                try {
-                    SymbolTable.top.put(new VariableItem(s_name, types , varDec));
-                } catch (ItemAlreadyExistsException e) {
-                    System.out.println("Line:" + varDec.getLine() + "-> " + s_name + " already declared");
-                }
-            }
-        }
-
         return null;
     }
 
 
     @Override
     public Void visit(ParamDec paramDec) {
-        List<Specifier> specs = paramDec.getSpecifiers();
-        List<Type> types = DeclaratorUtils.extractTypes(specs);
-
-        String name = null;
-
-        if (paramDec.getDeclarator() != null) {
-            name = DeclaratorUtils.extractName(paramDec.getDeclarator());
-        }
-
-        if (name == null) {
-            name = DeclaratorUtils.extractVarName(specs);
-        }
-
-        if (name != null) {
-            try {
-                SymbolTable.top.put(new VariableItem(name, types , paramDec));
-            } catch (ItemAlreadyExistsException e) {
-                System.out.println("Line:" + paramDec.getLine() + "-> " + name + " already declared");
-            }
-        }
-
         return null;
     }
 
@@ -265,11 +219,23 @@ public class NameAnalyzer extends Visitor<Void> {
     @Override
     public Void visit(FunctionDeclarator functionDeclarator) {
         List<ParamDec> params = functionDeclarator.getParameters();
+        List<ParamDec> new_params = new ArrayList<>();
 
-        for (ParamDec param : params) {
-            param.accept(this);
+        if(isInFunction){
+            for (ParamDec param : params) {
+                for(SymbolTableItem item : functionArg.items.values()){
+                    if(item instanceof VariableItem && item.getUsed()){
+                        if(((VariableItem) item).getDeclaration() == param)
+                            new_params.add(param);
+                    }
+                }
+            }
+            functionDeclarator.setParameters(new_params);
         }
 
+        for (ParamDec param : functionDeclarator.getParameters()) {
+            param.accept(this);
+        }
         return null;
     }
 
@@ -291,78 +257,43 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(ArrayExpression arrayExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        addFunctionArg(arrayExpression);
-        if (ctx != null) {
-            ctx.funcCallStack.push(arrayExpression);
-        }
         if (arrayExpression.getAssigned() != null)
             arrayExpression.getAssigned().accept(this);
         if (arrayExpression.getIndex() != null)
             arrayExpression.getIndex().accept(this);
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
-        }
         return null;
     }
 
     @Override
     public Void visit(BinaryExpression binaryExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        addFunctionArg(binaryExpression);
-        if (ctx != null) {
-            ctx.funcCallStack.push(binaryExpression);
-        }
         if (binaryExpression.getLeftOperand() != null)
             binaryExpression.getLeftOperand().accept(this);
         if (binaryExpression.getRightOperand() != null)
             binaryExpression.getRightOperand().accept(this);
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
-        }
         return null;
     }
 
 
     @Override
     public Void visit(CastExpression castExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        addFunctionArg(castExpression);
-        if (ctx != null) {
-            ctx.funcCallStack.push(castExpression);
-        }
         if (castExpression.getTargetType() != null)
             castExpression.getTargetType().accept(this);
         if (castExpression.getExpression() != null)
             castExpression.getExpression().accept(this);
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
-        }
+
         return null;
     }
 
     @Override
     public Void visit(CommaExpression commaExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        if (ctx != null) {
-            ctx.funcCallStack.push(commaExpression);
-        }
         for (Expression expr : commaExpression.getExpressions()) {
             expr.accept(this);
-        }
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
         }
         return null;
     }
 
     @Override
     public Void visit(CompoundLiteralExpression compoundLiteralExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        addFunctionArg(compoundLiteralExpression);
-        if (ctx != null) {
-            ctx.funcCallStack.push(compoundLiteralExpression);
-        }
         if (compoundLiteralExpression.getType() != null)
             compoundLiteralExpression.getType().accept(this);
         if (compoundLiteralExpression.getInitializers() != null) {
@@ -370,148 +301,55 @@ public class NameAnalyzer extends Visitor<Void> {
                 entry.accept(this);
             }
         }
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
-        }
         return null;
     }
 
     @Override
     public Void visit(ConditionalExpression conditionalExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        addFunctionArg(conditionalExpression);
-        if (ctx != null) {
-            ctx.funcCallStack.push(conditionalExpression);
-        }
         if (conditionalExpression.getCondition() != null)
             conditionalExpression.getCondition().accept(this);
         if (conditionalExpression.getTrueExpression() != null)
             conditionalExpression.getTrueExpression().accept(this);
         if (conditionalExpression.getFalseExpression() != null)
             conditionalExpression.getFalseExpression().accept(this);
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
-        }
         return null;
     }
 
     @Override
-    public Void visit(ConstExpression constExpression) {
-        addFunctionArg(constExpression);
-        return null;
-    }
+    public Void visit(ConstExpression constExpression) { return null; }
 
     @Override
-    public Void visit(DigitSequenceExpression digitSequenceExpression) {
-        addFunctionArg(digitSequenceExpression);
-        return null;
-    }
+    public Void visit(DigitSequenceExpression digitSequenceExpression) { return null; }
 
     @Override
     public Void visit(FunctionCallExpression functionCallExpression) {
         Expression functionExpr = functionCallExpression.getFunction();
-        isInFunctionCallContext = true;
-        argCount = countFunctionArguments(functionCallExpression);
         functionExpr.accept(this);
-        isInFunctionCallContext = false;
 
-        FuncCallContext ctx = new FuncCallContext(usedArgs);
-        funcCallContextStack.push(ctx);
-        usedArgs = null;
-
-        ctx.funcCallStack.push(functionCallExpression);
-        ctx.isFuncCallArg = true;
         for (Expression arg : functionCallExpression.getArguments()) {
             arg.accept(this);
-        }
-        functionCallExpression.setSelfArguments(ctx.argsExpression);
-        ctx.isFuncCallArg = false;
-        funcCallContextStack.pop();
-        if (!funcCallContextStack.isEmpty()) {
-            FuncCallContext parent = funcCallContextStack.peek();
-            if (parent.usedArgs != null &&
-                    parent.currArg < parent.usedArgs.size() &&
-                    parent.usedArgs.get(parent.currArg)) {
-                parent.argsExpression.add(functionCallExpression);
-            }
-            parent.currArg++;
         }
         return null;
     }
 
     @Override
     public Void visit(IdExpression idExpression) {
-        String name = idExpression.getValue();
-        if (isInFunctionCallContext) {
-
-            if (name == null || isBuiltIn(name)) {
-                if (isBuiltIn(name)) {
-                    usedArgs = List.of(true, true);
-                }
-                return null;
-            }
-
-            try {
-                FunctionItem item =  SymbolTable.top.findFunctionByName(name , argCount);
-                argCount = 0; // Reset argCount after visiting a function call
-                item.setUed();
-                usedArgs = item.getUsedArgs();
-            } catch (ItemNotFoundException e) {
-                System.out.println("Line:" + idExpression.getLine() + "-> " + name + " not declared");
-            }
-            return null;
-        }
-
-        try {
-            SymbolTableItem item = SymbolTable.top.getItem(name);
-            FuncCallContext ctx = funcCallContextStack.peek();
-            if (ctx != null && ctx.isFuncCallArg) {
-                if (ctx.usedArgs != null && ctx.usedArgs.get(ctx.currArg)) {
-                    item.setUed();
-                    ctx.argsExpression.add(idExpression);
-                }
-                ctx.currArg += 1;
-            }
-            else
-                item.setUed();
-        } catch (ItemNotFoundException e) {
-            System.out.println("Line:" + idExpression.getLine() + "-> " + name + " not declared");
-        }
         return null;
     }
 
     @Override
     public Void visit(SizeofExpression sizeofExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        addFunctionArg(sizeofExpression);
-        if (ctx != null) {
-            ctx.funcCallStack.push(sizeofExpression);
-        }
         if (sizeofExpression.getTypeName() != null)
             sizeofExpression.getTypeName().accept(this);
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
-        }
         return null;
     }
     @Override
-    public Void visit(StringExpression stringExpression) {
-        addFunctionArg(stringExpression);
-        return null;
-    }
+    public Void visit(StringExpression stringExpression) { return null; }
 
     @Override
     public Void visit(UnaryExpression unaryExpression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        addFunctionArg(unaryExpression);
-        if (ctx != null) {
-            ctx.funcCallStack.push(unaryExpression);
-        }
         if (unaryExpression.getOperand() != null)
             unaryExpression.getOperand().accept(this);
-        if (ctx != null) {
-            ctx.funcCallStack.pop();
-        }
         return null;
     }
 
@@ -596,29 +434,6 @@ public class NameAnalyzer extends Visitor<Void> {
         return null;
     }
 
-    private void addFunctionArg(Expression expression) {
-        FuncCallContext ctx = funcCallContextStack.peek();
-        if (ctx == null)
-            return;
-
-        if (!ctx.isFuncCallArg || ctx.usedArgs == null || ctx.currArg >= ctx.usedArgs.size())
-            return;
-
-        if(ctx.funcCallStack.size() == 1
-                && (ctx.funcCallStack.peek() instanceof FunctionCallExpression)){
-            if(ctx.usedArgs.get(ctx.currArg)){
-                ctx.argsExpression.add(expression);
-            }
-            ctx.currArg += 1;
-        }
-        else if(ctx.funcCallStack.peek() instanceof CommaExpression){
-            if(ctx.usedArgs.get(ctx.currArg)){
-                ctx.argsExpression.add(expression);
-            }
-            ctx.currArg += 1;
-        }
-    }
-
     private int countFunctionArguments(FunctionCallExpression callExpr) {
         int count = 0;
         for (Expression arg : callExpr.getArguments()) {
@@ -673,4 +488,5 @@ public class NameAnalyzer extends Visitor<Void> {
 
     @Override
     public Void visit(VoidType voidType) { return null; }
+
 }

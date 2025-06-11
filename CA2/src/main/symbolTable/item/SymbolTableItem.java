@@ -9,6 +9,7 @@ import java.util.List;
 public class SymbolTableItem {
     protected String name;
     protected List<Type> types;
+    protected boolean isUsed = false;
 
     public SymbolTableItem(String name, List<Type> types) {
         this.name = name;
@@ -25,6 +26,11 @@ public class SymbolTableItem {
 
     public String getTypeString() {
         return types.stream().map(Type::toString).reduce((a, b) -> a + " " + b).orElse("");
+    }
+
+    public void setUed() {this.isUsed = true;}
+    public boolean getUsed() {
+        return isUsed;
     }
 
     public String getKey() {

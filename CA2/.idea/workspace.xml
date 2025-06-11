@@ -7,18 +7,37 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="03ae34a9-2000-4ae7-80e6-f78dfa855550" name="Changes" comment="name analyzer and symbol table">
+    <list default="true" id="03ae34a9-2000-4ae7-80e6-f78dfa855550" name="Changes" comment="handle include and typedef in cpy visitor">
+      <change afterPath="$PROJECT_DIR$/src/main/optimizer/Optimizer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/optimizer/UnusedVarVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/statement/CompoundStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/statement/CompoundStatement.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/Program.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/Program.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/FuncDec.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/FuncDec.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/SymbolTableItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/SymbolTableItem.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/SimpleLang.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimpleLang.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/Program.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/Program.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/declaration/FuncDec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/declaration/FuncDec.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/expression/FunctionCallExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/expression/FunctionCallExpression.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/statement/CompoundStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/statement/CompoundStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/FunctionItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/FunctionItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/SymbolTableItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/SymbolTableItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/VariableItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/VariableItem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/CpyVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/CpyVisitor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/visitor/NameAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/NameAnalyzer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test.sl" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.sl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -49,7 +68,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Test.executor": "Run",
+    "Application.Test.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -97,25 +116,37 @@
       <option name="project" value="LOCAL" />
       <updated>1749409886237</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="handle include and typedef in cpy visitor">
+      <option name="closed" value="true" />
+      <created>1749494713151</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749494713151</updated>
+    </task>
+    <task id="LOCAL-00004" summary="handle include and typedef in cpy visitor">
+      <option name="closed" value="true" />
+      <created>1749494725173</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1749494725173</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="name analyzer and symbol table" />
-    <option name="LAST_COMMIT_MESSAGE" value="name analyzer and symbol table" />
+    <MESSAGE value="handle include and typedef in cpy visitor" />
+    <option name="LAST_COMMIT_MESSAGE" value="handle include and typedef in cpy visitor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/SimpleLang.java</url>
-          <line>27</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/visitor/CpyVisitor.java</url>
-          <line>337</line>
-          <option name="timeStamp" value="2" />
+          <line>29</line>
+          <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

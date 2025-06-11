@@ -20,7 +20,7 @@ public class FuncDec extends Declaration {
     private SymbolTable symbol_table;
 
     public void set_symbol_table(SymbolTable symbol_table) {this.symbol_table = symbol_table;}
-
+    public SymbolTable getSymbolTable() {return this.symbol_table;}
 
     public List<Specifier> getSpecifiers() {
         return specifiers;

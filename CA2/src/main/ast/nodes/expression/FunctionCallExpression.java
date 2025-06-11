@@ -8,6 +8,7 @@ import java.util.List;
 public class FunctionCallExpression extends Expression {
     private Expression function;
     private List<Expression> arguments = new ArrayList<>();
+    private List<Expression> self_arguments = new ArrayList<>();
 
     public Expression getFunction() {
         return function;
@@ -15,6 +16,14 @@ public class FunctionCallExpression extends Expression {
 
     public List<Expression> getArguments() {
         return arguments;
+    }
+
+    public List<Expression> getSelfArguments() {
+        return self_arguments;
+    }
+
+    public void setSelfArguments(List<Expression> arguments) {
+        this.self_arguments = arguments;
     }
 
     public FunctionCallExpression() {

@@ -12,14 +12,11 @@ import main.ast.nodes.statement.*;
 import main.ast.nodes.type.*;
 import main.ast.nodes.expression.initializer.*;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 
 public class CpyVisitor extends Visitor<Void> {
-    private Deque<Node> nodeStack = new ArrayDeque<>();
-    private Deque<Node> callStack = new ArrayDeque<>();
+    private final Deque<Node> nodeStack = new ArrayDeque<>();
+    private final Deque<Node> callStack = new ArrayDeque<>();
     private Program rootProgram = null;
 
 
@@ -52,7 +49,7 @@ public class CpyVisitor extends Visitor<Void> {
         boolean isRedundantCompound =
                 !callStack.isEmpty() &&
                         callStack.peek() instanceof CompoundStatement &&
-                        ((CompoundStatement) callStack.peek()).getIndentLevel() == compoundStatement.getIndentLevel();
+                        Objects.equals(((CompoundStatement) callStack.peek()).getIndentLevel(), compoundStatement.getIndentLevel());
 
         compoundStatement.setIndentLevel(currentIndentLevel);
 

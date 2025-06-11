@@ -18,7 +18,11 @@ public class Program extends Node {
         this.symbol_table = symbol_table;
     }
 
-    public void getDeclarations(List<Declaration> declarations) {
+    public SymbolTable getSymbolTable() {
+        return this.symbol_table;
+    }
+
+    public void setDeclarations(List<Declaration> declarations) {
         this.declarations = declarations;
     }
 

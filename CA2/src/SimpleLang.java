@@ -1,6 +1,7 @@
 import main.ast.nodes.Program;
 import main.grammar.CPYLexer;
 import main.grammar.CPYParser;
+import main.optimizer.Optimizer;
 import main.symbolTable.SymbolTable;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -23,7 +24,10 @@ public class SimpleLang {
         NameAnalyzer nameAnalyzer = new NameAnalyzer();
         nameAnalyzer.visit(program);
 
-//        TestVisitor my_visitor = new TestVisitor();
-//        my_visitor.visit(program);
+        Optimizer optimizer = new Optimizer();
+        optimizer.optimize(program);
+
+        TestVisitor my_visitor = new TestVisitor();
+        my_visitor.visit(program);
     }
 }

@@ -9,15 +9,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompoundStatement extends Statement {
-    private final List<Statement> statements = new ArrayList<>();
-    private final List<Declaration> declarations = new ArrayList<>();
-    private final List<BlockItem> items = new ArrayList<>();
+    private List<Statement> statements = new ArrayList<>();
+    private List<Declaration> declarations = new ArrayList<>();
+    private List<BlockItem> items = new ArrayList<>();
 
-    private final List<Statement> self_statements = new ArrayList<>();
-    private final List<Declaration> self_decleration = new ArrayList<>();
-    private final List<BlockItem> self_items = new ArrayList<>();
+    private List<Statement> self_statements = new ArrayList<>();
+    private List<Declaration> self_decleration = new ArrayList<>();
+    private List<BlockItem> self_items = new ArrayList<>();
+
+    public void setStatements(List<Statement> statements){
+        this.self_statements = statements;
+    }
+
+    public void setDeclarations(List<Declaration> declarations){
+        this.self_decleration = declarations;
+    }
+
+    public void setItems(List<BlockItem> items){
+        this.self_items = items;
+    }
+
 
     private SymbolTable symbol_table;
+
+    public SymbolTable getSymbolTable(){
+        return this.symbol_table;
+    }
+
     public void set_symbol_table(SymbolTable symbol_table) {this.symbol_table = symbol_table;}
 
     public CompoundStatement() {
