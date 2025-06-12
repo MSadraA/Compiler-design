@@ -9,7 +9,7 @@ public class Optimizer {
         new AfterReturn().visit(program);
         new NoSideEffects().visit(program);
         new UnusedVarVisitor().visit(program);
-//        new SideEffectFreeVisitor().visit(program);
-//        new MultipleAssignmentVisitor().visit(program);
+        new MarkMainAccess().visit(program);
+        new RemoveUnreachable().visit(program);
     }
 }

@@ -45,10 +45,6 @@ public class SymbolTable {
         return stack;
     }
 
-    boolean isNamedItem(SymbolTableItem item) {
-        return item instanceof VariableItem || item instanceof TypedefItem;
-    }
-
     public void put(SymbolTableItem item) throws ItemAlreadyExistsException {
         if (items.containsKey(item.getKey()) || findTypedefByName(item.getKey()) != null)
             throw new ItemAlreadyExistsException();

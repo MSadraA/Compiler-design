@@ -84,7 +84,7 @@ public class NameAnalyzer extends Visitor<Void> {
         List<SymbolTableItem> params = DeclaratorUtils.extractFunctionParamItems(declarator);
         FunctionItem functionItem = null;
         try {
-            functionItem = new FunctionItem(funcName , types ,params);
+            functionItem = new FunctionItem(funcName , types ,params , funcDec);
             SymbolTable.top.put(functionItem);
         } catch (ItemAlreadyExistsException e) {
             System.out.println("Line:" + funcDec.getLine() + "-> function " + funcName + " already declared");

@@ -17,6 +17,16 @@ public class FuncDec extends Declaration {
     private List<VarDec> varDecs = new ArrayList<>();
     private CompoundStatement statement;
 
+    boolean reachable = false;
+
+    public boolean isReachable() {
+        return reachable;
+    }
+
+    public void setReachable() {
+        this.reachable = true;
+    }
+
     private SymbolTable symbol_table;
 
     public void set_symbol_table(SymbolTable symbol_table) {this.symbol_table = symbol_table;}

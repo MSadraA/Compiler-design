@@ -14,6 +14,16 @@ import static main.symbolTable.utils.DeclaratorUtils.extractName;
 public class FunctionItem extends SymbolTableItem {
     private final List<SymbolTableItem> parameters;
 
+    private FuncDec declaration;
+
+    public FuncDec getDeclaration() {
+        return declaration;
+    }
+
+    public void setDeclaration(FuncDec declaration) {
+        this.declaration = declaration;
+    }
+
     public void clearParameters(){
         parameters.clear();
     }
@@ -22,9 +32,10 @@ public class FunctionItem extends SymbolTableItem {
         parameters.add(item);
     }
 
-    public FunctionItem(String name, List<Type> returnTypes, List<SymbolTableItem> parameters) {
+    public FunctionItem(String name, List<Type> returnTypes, List<SymbolTableItem> parameters , FuncDec declaration) {
         super(name, returnTypes);
         this.parameters = parameters;
+        this.declaration = declaration;
     }
 
     public List<SymbolTableItem> getParameters() {

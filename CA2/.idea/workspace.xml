@@ -7,35 +7,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="03ae34a9-2000-4ae7-80e6-f78dfa855550" name="Changes" comment="before nameAnalyzer organization">
-      <change afterPath="$PROJECT_DIR$/src/main/optimizer/AfterReturn.java" afterDir="false" />
+    <list default="true" id="03ae34a9-2000-4ae7-80e6-f78dfa855550" name="Changes" comment="added AfterReturn optimizer">
+      <change afterPath="$PROJECT_DIR$/src/main/optimizer/MarkMainAccess.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/optimizer/RemoveUnreachable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/SimpleLang.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/SimpleLang.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/VarDec.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/VarDec.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declarator/ArrayDeclarator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declarator/ArrayDeclarator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/expression/IdExpression.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/expression/IdExpression.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/statement/ForStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/statement/ForStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/optimizer/UnusedVarVisitor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/optimizer/UnusedVarVisitor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/FuncDec.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/ast/nodes/declaration/FuncDec.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/optimizer/Optimizer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/optimizer/Optimizer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/SymbolTable.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/SymbolTable.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/ConstItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/ConstItem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/TypedefItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/TypedefItem.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/utils/DeclaratorUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/utils/DeclaratorUtils.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer$FuncCallContext.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer$FuncCallContext.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/FunctionItem.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/symbolTable/item/FunctionItem.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/visitor/NameAnalyzer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/CA2/main/visitor/TestVisitor.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/CA2/main/visitor/TestVisitor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimpleLang.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimpleLang.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/declaration/VarDec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/declaration/VarDec.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/declarator/ArrayDeclarator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/declarator/ArrayDeclarator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/expression/IdExpression.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/expression/IdExpression.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/statement/ForStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/statement/ForStatement.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/ast/nodes/declaration/FuncDec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/ast/nodes/declaration/FuncDec.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/optimizer/Optimizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/optimizer/Optimizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/optimizer/UnusedVarVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/optimizer/UnusedVarVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/symbolTable/SymbolTable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/SymbolTable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/ConstItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/ConstItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/TypedefItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/TypedefItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/utils/DeclaratorUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/utils/DeclaratorUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/symbolTable/item/FunctionItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/symbolTable/item/FunctionItem.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/visitor/NameAnalyzer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/NameAnalyzer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/visitor/TestVisitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/visitor/TestVisitor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test.sl" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.sl" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -66,7 +51,7 @@
   }
 }</component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -167,7 +152,23 @@
       <option name="project" value="LOCAL" />
       <updated>1749661618742</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="added AfterReturn optimizer">
+      <option name="closed" value="true" />
+      <created>1749724301617</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1749724301617</updated>
+    </task>
+    <task id="LOCAL-00009" summary="added AfterReturn optimizer">
+      <option name="closed" value="true" />
+      <created>1749724311428</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1749724311428</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -175,7 +176,8 @@
     <MESSAGE value="handle include and typedef in cpy visitor" />
     <MESSAGE value="unused variable optimizer" />
     <MESSAGE value="before nameAnalyzer organization" />
-    <option name="LAST_COMMIT_MESSAGE" value="before nameAnalyzer organization" />
+    <MESSAGE value="added AfterReturn optimizer" />
+    <option name="LAST_COMMIT_MESSAGE" value="added AfterReturn optimizer" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
