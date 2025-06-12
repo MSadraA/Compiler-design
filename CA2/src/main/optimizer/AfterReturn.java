@@ -27,34 +27,9 @@ import java.util.List;
 
 import static main.symbolTable.utils.DeclaratorUtils.extractName;
 
-public class UnusedVarVisitor extends Visitor<Void> {
-    private SymbolTable functionArg = null;
-    private SymbolTable statementScope = null;
-    private boolean isInFunction = false;
-
+public class AfterReturn extends Visitor<Void> {
     @Override
     public Void visit(Program program) {
-        List<Declaration> org_declarations = program.getDeclarations();
-        List<Declaration> new_declarations = new ArrayList<>();
-        SymbolTable scope = program.getSymbolTable();
-
-        for(Declaration declaration : org_declarations){
-            if ((declaration instanceof FuncDec)) {
-                new_declarations.add(declaration);
-                continue;
-            }
-
-            for (SymbolTableItem item : scope.items.values()) {
-                if (item instanceof VariableItem variableItem) {
-                    if (variableItem.getDeclaration() == declaration && variableItem.getUsed()) {
-                        new_declarations.add(declaration);
-                        break;
-                    }
-                }
-            }
-        }
-
-        program.setDeclarations(new_declarations);
 
         for (Declaration declaration : program.getDeclarations()) {
             declaration.accept(this);
@@ -65,17 +40,10 @@ public class UnusedVarVisitor extends Visitor<Void> {
     @Override
     public Void visit(FuncDec funcDec) {
         Declarator declarator = funcDec.getDeclarator();
-        functionArg = funcDec.getSymbolTable();
-
-        // Optimize function args
-        if ((declarator != null ) && functionArg != null ){
-            isInFunction = true;
+        if (declarator != null ){
             declarator.accept(this);
-            isInFunction = false;
         }
-        functionArg = null;
 
-        // Optimize body
         if (funcDec.getStatement() != null)
             funcDec.getStatement().accept(this);
 
@@ -84,40 +52,29 @@ public class UnusedVarVisitor extends Visitor<Void> {
 
     @Override
     public Void visit(CompoundStatement compoundStatement) {
-        SymbolTable scope = compoundStatement.getSymbolTable();
-        statementScope = scope;
-        List<BlockItem> org_items = new ArrayList<>(compoundStatement.getSelfItems());
-
-        List<BlockItem> new_items = new ArrayList<>();
         List<Declaration> new_declarations = new ArrayList<>();
         List<Statement> new_statements = new ArrayList<>();
+        List<BlockItem> new_items = new ArrayList<>();
 
-        for (BlockItem item : org_items) {
-            if (item instanceof Statement statement) {
+        for (BlockItem item : compoundStatement.getSelfItems()) {
+            if (item instanceof Declaration declaration) {
+                new_declarations.add(declaration);
+                new_items.add(item);
+            } else if (item instanceof Statement statement) {
                 new_statements.add(statement);
                 new_items.add(item);
-            } else if (item instanceof Declaration declaration) {
-                for (SymbolTableItem s_item : scope.items.values()) {
-                    if (s_item instanceof FunctionItem) continue;
-                    if (s_item instanceof VariableItem variableItem && variableItem.getUsed()
-                            && variableItem.getDeclaration() == declaration) {
-                        new_declarations.add(declaration);
-                        new_items.add(item);
-                        break;
-                    }
-                }
+                if(statement instanceof  ReturnStatement)
+                    break;
             }
         }
-
         compoundStatement.setStatements(new_statements);
         compoundStatement.setDeclarations(new_declarations);
         compoundStatement.setItems(new_items);
 
-        for (BlockItem item : new_items) {
+        for(BlockItem item : compoundStatement.getItems()){
             item.accept(this);
         }
 
-        statementScope = null;
         return null;
     }
 
@@ -204,20 +161,6 @@ public class UnusedVarVisitor extends Visitor<Void> {
 
     @Override
     public Void visit(VarDec varDec) {
-        List<InitDeclarator> initDeclarator = varDec.getInitDeclarators();
-        if(statementScope == null)
-            return null;
-        List<InitDeclarator> new_initDeclarator = new ArrayList<>();
-        for (InitDeclarator init : initDeclarator){
-            Declarator declarator = init.getDeclarator();
-            if(init.getDeclarator() == null)
-                continue;
-            String name = extractName(declarator);
-            if(statementScope.findItemByName(name).getUsed()){
-                new_initDeclarator.add(init);
-            }
-        }
-        varDec.setInitDeclarators(new_initDeclarator);
         return null;
     }
 
@@ -235,21 +178,6 @@ public class UnusedVarVisitor extends Visitor<Void> {
 
     @Override
     public Void visit(FunctionDeclarator functionDeclarator) {
-        List<ParamDec> params = functionDeclarator.getParameters();
-        List<ParamDec> new_params = new ArrayList<>();
-
-        if(isInFunction){
-            for (ParamDec param : params) {
-                for(SymbolTableItem item : functionArg.items.values()){
-                    if(item instanceof VariableItem && item.getUsed()){
-                        if(((VariableItem) item).getDeclaration() == param)
-                            new_params.add(param);
-                    }
-                }
-            }
-            functionDeclarator.setParameters(new_params);
-        }
-
         for (ParamDec param : functionDeclarator.getParameters()) {
             param.accept(this);
         }
@@ -260,9 +188,7 @@ public class UnusedVarVisitor extends Visitor<Void> {
     public Void visit(IdentifierDeclarator identifierDeclarator) { return null; }
 
     @Override
-    public Void visit(InitDeclarator initDeclarator) {
-        return null;
-    }
+    public Void visit(InitDeclarator initDeclarator) { return null; }
 
     @Override
     public Void visit(PointerDeclarator pointerDeclarator) {
@@ -313,7 +239,6 @@ public class UnusedVarVisitor extends Visitor<Void> {
 
     @Override
     public Void visit(CompoundLiteralExpression compoundLiteralExpression) {
-
         if (compoundLiteralExpression.getType() != null)
             compoundLiteralExpression.getType().accept(this);
         if (compoundLiteralExpression.getInitializers() != null) {
@@ -454,40 +379,6 @@ public class UnusedVarVisitor extends Visitor<Void> {
         return null;
     }
 
-    @Override
-    public Void visit(Type type) { return null; }
-
-    @Override
-    public Void visit(BoolType boolType) { return null; }
-
-    @Override
-    public Void visit(CharType charType) { return null; }
-
-    @Override
-    public Void visit(DoubleType doubleType) { return null; }
-
-    @Override
-    public Void visit(FloatType floatType) { return null; }
-
-    @Override
-    public Void visit(IdType idType) { return null; }
-
-    @Override
-    public Void visit(IntType intType) { return null; }
-
-    @Override
-    public Void visit(LongType longType) { return null; }
-
-    @Override
-    public Void visit(ShortType shortType) { return null; }
-
-    @Override
-    public Void visit(SignedType signedType) { return null; }
-
-    @Override
-    public Void visit(UnsignedType unsignedType) { return null; }
-
-    @Override
-    public Void visit(VoidType voidType) { return null; }
-
 }
+
+

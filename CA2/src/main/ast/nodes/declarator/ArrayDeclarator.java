@@ -7,6 +7,10 @@ public class ArrayDeclarator extends Declarator{
     private Declarator declarator;
     private Expression expression;
 
+    public Expression getExpression(){
+        return expression;
+    }
+
     public ArrayDeclarator() {
     }
 

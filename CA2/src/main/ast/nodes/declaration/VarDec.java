@@ -10,6 +10,8 @@ import java.util.List;
 public class VarDec extends Declaration{
     private List<Specifier> specifiers;
     private List<InitDeclarator> initDeclarators;
+
+    //Optional field for type information
     private List<Type> types;
 
     public List<Type> getTypes() {

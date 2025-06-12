@@ -11,6 +11,7 @@ import main.ast.nodes.specifier.*;
 import main.ast.nodes.statement.*;
 import main.ast.nodes.type.*;
 import main.ast.nodes.expression.initializer.*;
+import main.symbolTable.SymbolTable;
 
 
 import java.util.ArrayList;
@@ -25,20 +26,21 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(FuncDec funcDec){
+        SymbolTable scope = funcDec.getSymbolTable();
         this.currentFuncName = "";
         CompoundStatement statement = funcDec.getStatement();
         Declarator declarator = funcDec.getDeclarator();
         int count = 0;
-
+        int argsCount = 0;
         if (declarator != null){
             inFunctionDeclarator = true;
-            declarator.accept(this);
+            argsCount = declarator.accept(this);
         }
         inFunctionDeclarator = false;
 
         if(statement != null){
             count = statement.accept(this);
-            logs.add("Line " + statement.getLine() + ": Stmt function " + currentFuncName + " = " + count);
+            logs.add("Line " + statement.getLine() + ": Stmt function " + currentFuncName + " = " + count + ' ' + argsCount);
         }
 
         for (int i = (logs.size() - 1) ; i >= 0 ; i--){
@@ -107,6 +109,10 @@ public class TestVisitor extends Visitor<Integer> {
         if (declarator != null){
             declarator.accept(this);
         }
+        List<ParamDec> parameters = functionDeclarator.getParameters();
+        if(parameters != null){
+            return parameters.size();
+        }
         return 0;
     }
 
@@ -135,10 +141,11 @@ public class TestVisitor extends Visitor<Integer> {
     @Override
     public Integer visit(PointerDeclarator pointerDeclarator) {
         Declarator declarator = pointerDeclarator.getDeclarator();
+        int count = 0;
         if(declarator != null){
-            declarator.accept(this);
+            count = declarator.accept(this);
         }
-        return 0;
+        return count;
     }
 
     @Override
@@ -164,7 +171,7 @@ public class TestVisitor extends Visitor<Integer> {
     public Integer visit(BinaryExpression binaryExpression) {
         BinaryOperator operator = binaryExpression.getOperator();
 
-        logs.add("Line " + binaryExpression.getLine() + ": Expr " + operator.getSymbol());
+//        logs.add("Line " + binaryExpression.getLine() + ": Expr " + operator.getSymbol());
         return 0;
     }
 
@@ -180,7 +187,7 @@ public class TestVisitor extends Visitor<Integer> {
     @Override
     public Integer visit(CommaExpression commaExpression) {
         List<Expression> expressions = commaExpression.getExpressions();
-        logs.add("Line " + commaExpression.getLine() + ": Expr ,");
+//        logs.add("Line " + commaExpression.getLine() + ": Expr ,");
         return 0;
     }
 
@@ -210,13 +217,13 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(ConstExpression constExpression) {
-        logs.add("Line " + constExpression.getLine() + ": Expr " + constExpression.getValue());
+//        logs.add("Line " + constExpression.getLine() + ": Expr " + constExpression.getValue());
         return 0;
     }
 
     @Override
     public Integer visit(DigitSequenceExpression digitSequenceExpression) {
-        logs.add("Line " + digitSequenceExpression.getLine() + ": Expr " + digitSequenceExpression.getValue());
+//        logs.add("Line " + digitSequenceExpression.getLine() + ": Expr " + digitSequenceExpression.getValue());
         return 0;
     }
 
@@ -236,8 +243,8 @@ public class TestVisitor extends Visitor<Integer> {
 
     @Override
     public Integer visit(IdExpression idExpression) {
-        String expressionVal = "Line " + idExpression.getLine() + ": Expr " + idExpression.getValue();
-        logs.add(expressionVal);
+//        String expressionVal = "Line " + idExpression.getLine() + ": Expr " + idExpression.getValue();
+//        logs.add(expressionVal);
         return 0;
     }
 
@@ -249,8 +256,8 @@ public class TestVisitor extends Visitor<Integer> {
     @Override
     public Integer visit(StringExpression stringExpression) {
         String value = String.join(" " , stringExpression.getValue());
-        String expressionVal = "Line " + stringExpression.getLine() + ": Expr " + value;
-        logs.add(expressionVal);
+//        String expressionVal = "Line " + stringExpression.getLine() + ": Expr " + value;
+//        logs.add(expressionVal);
 
         return 0;
     }
@@ -259,7 +266,7 @@ public class TestVisitor extends Visitor<Integer> {
     public Integer visit(UnaryExpression unaryExpression) {
         Expression expression = unaryExpression.getOperand();
         UnaryOperator operator = unaryExpression.getOperator();
-        logs.add("Line " + unaryExpression.getLine() + ": Expr " + operator.getSymbol());
+//        logs.add("Line " + unaryExpression.getLine() + ": Expr " + operator.getSymbol());
         return 0;
     }
 

@@ -91,6 +91,17 @@ public class SymbolTable {
         return null;
     }
 
+    public SymbolTableItem findItemByName(String name) {
+        SymbolTable current = this;
+        while (current != null) {
+            SymbolTableItem item = current.items.get(name);
+            if (item != null)
+                return item;
+            current = current.pre;
+        }
+        return null;
+    }
+
     public int getItemsSize() {
         return this.items.size();
     }

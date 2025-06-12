@@ -23,6 +23,8 @@ public class SimpleLang {
 
         NameAnalyzer nameAnalyzer = new NameAnalyzer();
         nameAnalyzer.visit(program);
+        if(nameAnalyzer.hasError())
+            return;
 
         Optimizer optimizer = new Optimizer();
         optimizer.optimize(program);

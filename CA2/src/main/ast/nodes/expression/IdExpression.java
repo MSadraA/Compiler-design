@@ -5,6 +5,17 @@ import main.visitor.IVisitor;
 public class IdExpression extends Expression {
     private String name;
 
+    // optional replacement expression, used for example in the case of a macro
+    private Expression replacement = null;
+
+    public void setReplacement(Expression replacement) {
+        this.replacement = replacement;
+    }
+
+    public Expression getReplacement() {
+        return replacement;
+    }
+
     public String getValue() {
         return name;
     }

@@ -42,7 +42,7 @@ public class DeclaratorUtils {
 
                 String name = DeclaratorUtils.extractVarName(specs);
                 int size = specs.size();
-                List<Type> types = (size > 0) ? extractTypes(specs.subList(0, size - 1)) : null;
+                List<Type> types = (size > 0) ? extractTypes(specs.subList(0, size - 1) , null) : null;
                 if (name == null && innerDecl != null)
                     name = DeclaratorUtils.extractName(innerDecl);
 
@@ -67,7 +67,7 @@ public class DeclaratorUtils {
         return null;
     }
 
-    public static List<Type> extractTypes(List<Specifier> specifiers) {
+    public static List<Type> extractTypes(List<Specifier> specifiers , boolean[] hasError) {
         List<Type> types = new ArrayList<>();
         if (specifiers == null || specifiers.isEmpty())
             return types;
@@ -78,8 +78,12 @@ public class DeclaratorUtils {
                 try {
                     TypedefItem typedefItem = (TypedefItem) SymbolTable.top.getItem(alias);
                     types.addAll(typedefItem.getTypes());
+                    typedefItem.setUed();
                 } catch (ItemNotFoundException e) {
-                    System.out.println("Line: " + spec.getLine() + " Typedef not found for alias: " + alias);
+                    if(hasError != null) {
+                        System.out.println("Line:" + spec.getLine() + "-> " + alias + " not declared");
+                        hasError[0] = true; // Set error flag if type not found
+                    }
                 }
             } else if (spec instanceof Type type) {
                 types.add(type);
